@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.energysh.egame.po.appstore.TStatisticsRank" table="t_statistics_rank">
+		<id name="appId" type="java.lang.Integer">
+			<column name="app_id" />
+			<generator class="identity" />
+		</id>
+		<property name="appName" type="java.lang.String">
+			<column name="app_name" />
+		</property>
+		<property name="realAllCount" type="java.lang.Integer">
+			<column name="real_all_count" />
+		</property>
+		<property name="baseNum" type="java.lang.Integer">
+			<column name="base_num" />
+		</property>
+		<property name="weekRealCount" type="java.lang.Integer">
+			<column name="week_real_count" />
+		</property>
+		<property name="weekReviseCount" type="java.lang.Integer">
+			<column name="week_revise_count" />
+		</property>
+		<property name="monthRealCount" type="java.lang.Integer">
+			<column name="month_real_count" />
+		</property>
+		<property name="monthReviseCount" type="java.lang.Integer">
+			<column name="month_revise_count" />
+		</property>
+		<property name="ctime" type="timestamp">
+			<column name="ctime" />
+		</property>
+	</class>
+</hibernate-mapping>

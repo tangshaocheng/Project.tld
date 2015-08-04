@@ -1,0 +1,155 @@
+body {
+    margin: 0px;
+}
+
+div {
+    background-repeat: no-repeat;
+}
+
+.raw_image {
+    width: 100%;
+    height: 100%;
+}
+
+.preload {
+    display: none;
+}
+#main_container {
+}
+
+.form_sketch {
+    border-color: transparent;
+    background-color: transparent;
+}
+
+.u0_normal {
+    background-image: url('../../img/new/top_files/u0_top_left.png');
+}
+
+.u0_container {
+    position:absolute;
+    left:0px;
+    top:0px;
+    width:1280px;
+    height:99px;
+}
+
+#u0_img {
+    position:absolute;
+    left:0px;
+    top:0px;
+    width:1280px;
+    height:99px;
+}
+
+.u0_right_normal {
+    background: url('../../img/new/top_files/u0_top_right.png') repeat-x;;
+}
+
+.u0_right_container {
+    position:absolute;
+    left:260px;
+    top:0px;
+    width:100%;
+    height:99px;
+}
+
+#u0_right_img {
+    position:absolute;
+    left:0px;
+    top:0px;
+    width:100%;
+    height:99px;
+}
+
+.u2_normal {
+    background-image: url('../../img/new/top_files/u258_normal.png');
+}
+
+.u2_container {
+    position:absolute;
+    left:15px;
+    top:22px;
+    width:28px;
+    height:24px;
+}
+
+#u2_img {
+    position:absolute;
+    left:0px;
+    top:0px;
+    width:28px;
+    height:24px;
+}
+
+.u4_normal {
+    background-image: url('../../img/new/top_files/u4_normal.png');
+    cursor: pointer;
+}
+
+.u4_container {
+    position:absolute;
+    left:197px;
+    top:23px;
+    width:52px;
+    height:24px;
+}
+
+#u4_img {
+    position:absolute;
+    left:0px;
+    top:0px;
+    width:52px;
+    height:24px;
+    padding-top: 6px;
+    padding-left: 14px;
+}
+
+.u6 {
+    position:absolute;
+    left:53px;
+    top:21px;
+    width:100px;
+    height:24px;font-family:Arial;
+    text-align:left;
+    word-wrap:break-word;
+}
+
+.u7 {
+    position:absolute;
+    top:15px;
+    left:42%;
+    width:366px;
+    height:39px;font-family:Arial;
+    text-align:center;
+    word-wrap:break-word;
+}
+.u9 {
+    position:absolute;
+    left:16px;
+    top:78px;
+    width:225px;
+    height:14px;font-family:Arial;
+    text-align:left;
+    word-wrap:break-word;
+}
+
+.u10 {
+    position:absolute;
+    left:276px;
+    top:78px;
+    width:600px;
+    height:14px;font-family:Arial;
+    text-align:left;
+    word-wrap:break-word;
+}
+
+.u11 {
+    position:absolute;
+    right:40px;
+    top:50px;
+    width:112px;
+    height:14px;font-family:Arial;
+    text-align:right;
+    word-wrap:break-word;
+}

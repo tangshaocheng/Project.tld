@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.energysh.egame.po.appstore.TUserAppInfo" table="t_user_appInfo">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="mac" type="java.lang.String">
+			<column name="mac" length="256" />
+		</property>
+		<property name="packageName" type="java.lang.String">
+			<column name="packageName" length="256" />
+		</property>
+		<property name="appName" type="java.lang.String">
+			<column name="appName" length="256" />
+		</property>
+		<property name="appVersion" type="java.lang.String">
+			<column name="appVersion" length="256" />
+		</property>
+		<property name="time" type="timestamp">
+			<column name="time"  />
+		</property>
+		
+	</class>
+</hibernate-mapping>

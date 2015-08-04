@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.energysh.egame.po.sso.PermitUser" table="permit_user">
+		<id name="userId" type="java.lang.Integer">
+			<column name="user_id" />
+			<generator class="identity" />
+		</id>
+		<property name="lname" type="string">
+			<column name="lname" length="100" not-null="true" />
+		</property>
+		<property name="lps" type="string">
+			<column name="lps" length="300" not-null="true" />
+		</property>
+		<property name="userType" type="java.lang.Integer">
+			<column name="user_type" />
+		</property>
+		<property name="ctime" type="timestamp">
+			<column name="ctime" length="19" not-null="false" />
+		</property>
+	</class>
+</hibernate-mapping>

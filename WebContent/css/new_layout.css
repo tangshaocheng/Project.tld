@@ -1,0 +1,71 @@
+@charset "utf-8";
+/* CSS Document */
+html,body,*{ margin:0 auto; font:"微软雅黑"; font-size:12px;}
+ul,li{list-style:none;}
+img{border:none; cursor:pointer;}
+/* textarea{ width:389px;} */
+a:link { color:#000; text-decoration:none;}
+a:visited {color:#000; text-decoration:none;}
+a:hover {color:#F00; text-decoration:underline;}
+a:active {color:#F00; text-decoration:none;}
+/*mainframe*/
+.main{width: 98%;}
+#warp{margin:0 10px;}
+#url{width:100%;color:#074eca;margin:10px 0 0 0;}
+hr{margin:0; padding:0;border-top:2px solid #91beed;}
+#contant{width:100%;}
+/*.selectthings{ background:#e5eaf2;padding:10px; margin:5px 0;}*/
+.selectthings{ background:#FFFFFF;padding:10px; margin:5px 0;}
+.selectautothings{ background:#e5eaf2;padding:5px; margin:3px 0;}
+/*table*/
+table{width:100%;border:1px solid #BFBFBF; }
+table{width:100%;background-color:#EBEBEB;font-size:12px; style="word-warp:break-word;word-break:break-all"}
+td{height:32px; padding:3px; Word-break: break-all; word-wrap:break-word;}   
+.odd{ background:#fff;}
+/*.even{ background:#e5e9f2;}
+.odd2{ background:#f8fbff;}*/
+.even{ background:#FFFFFF;}
+.odd2{ background:#F4F5F6;}
+
+.tdleft{ text-align:left;}
+.highlight{ background:#F9ECC6; cursor:pointer;}
+tfoot td{ background:#C1CBE1;}
+/*普通数据列表*/
+.datatable td{border:1px solid #BFBFBF;padding:5px ; border-width:0px 1px 1px 0px;}
+.datatable {background-color:#FFFFFF; padding:5px ;border-collapse:collapse;border-spacing: 0;}
+.datatable th{border:1px solid #BFBFBF; height:32px;font-size:12px;font-weigh:normal; background:url(../img/new/container_files/thbg.png) repeat-x; color:#4C4C4C;}
+.datatable tfoot td{ text-align:right;}
+
+.datatable3 td{padding:2px 5px;background:#fff;}
+.bmtitle{ margin:5px; border-bottom:1px dotted #CCC; }
+
+/*带输入的据列表*/
+.datatable2 td{padding:2px 5px;}
+.datatable2 th{ height:24px; background:url(../img/thbg.gif) repeat-x; color:#195692;}
+/*表格中的数据列表*/
+.tablein{ background:#ccc; width:98%; border:0;}
+.tablein th{ background:#ccd5f2; color:#000;}
+/*button*/
+.btn{cursor:pointer; margin:0;padding:2px 10px 0 10px;color:#FFF;border:0px solid #0166CC;background:url(../img/new/container_files/btn_bg.png) repeat-x;height: 24}
+/*弹出页面*/
+body#outwindow{background:#e5eaf2;}
+.foot{ text-align:center; margin:10px 0;background:#C1CBE1; padding:5px;}
+/*font*/
+a.yellow{color:#efe904;}
+a.red{color:#F00;}
+a.red:hover{ text-decoration:none;}                 
+.nav{
+	font-size: 14px;
+	font-weight: bold;
+	color: #003A92;
+	background-image: url(../img/bg-t.gif);
+	height: 31px;
+	text-indent: 11px;
+	text-align:center;
+	margin-top: 1px;
+	margin-bottom: 1px;
+	padding-top: 1px;
+	padding-bottom: 1px;
+	width: 100%;
+}
+.qdata{padding:10px; margin:0px 0;padding-top: 1px;}

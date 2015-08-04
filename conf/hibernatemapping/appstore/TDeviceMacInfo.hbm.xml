@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="com.energysh.egame.po.appstore.TDeviceMacInfo" table="t_device_mac_info">
+        <id name="mac" type="java.lang.Integer">
+            <column name="mac" />
+            <generator class="identity" />
+        </id>
+        <property name="androidId" type="java.lang.String">
+            <column name="android_id" length="100" />
+        </property>
+        <property name="deviceId" type="java.lang.String">
+            <column name="device_id" length="100" />
+        </property>
+        <property name="serial" type="java.lang.String">
+            <column name="serial" length="100" />
+        </property>
+        <property name="wifiId" type="java.lang.String">
+            <column name="wifi_id" length="100" />
+        </property>
+        <property name="imsi" type="java.lang.String">
+            <column name="imsi" length="100" />
+        </property>
+        <property name="batchId" type="java.lang.String">
+            <column name="batch_id" length="100" not-null="true" />
+        </property>
+        <property name="ctime" type="java.sql.Timestamp">
+            <column name="ctime" length="0" />
+        </property>
+        <property name="ip" type="java.lang.String">
+            <column name="ip" length="20" />
+        </property>
+        <property name="province" type="java.lang.Integer">
+            <column name="province" />
+        </property>
+        <property name="appId" type="java.lang.Integer">
+            <column name="app_id" />
+        </property>
+        <property name="ver" type="java.lang.String">
+            <column name="ver" length="45" />
+        </property>
+        <property name="osType" type="java.lang.String">
+            <column name="os_type" length="10" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.energysh.egame.po.appstore.TAppThemeBagList" table="t_app_theme_bag_list">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="themeBagId" type="java.lang.Integer">
+			<column name="theme_bag_id" />
+		</property>
+		<property name="subType" type="java.lang.Integer">
+			<column name="sub_type" />
+		</property>
+		<property name="subId" type="java.lang.Integer">
+			<column name="sub_id" />
+		</property>
+		<property name="sort" type="java.lang.Integer">
+			<column name="sort" />
+		</property>
+		<property name="ctime" type="timestamp">
+			<column name="ctime" />
+		</property>
+	</class>
+</hibernate-mapping>

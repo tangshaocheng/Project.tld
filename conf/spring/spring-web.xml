@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+	   http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+	   http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+	<import resource="classpath:spring/spring-conf.xml" />
+
+	<mvc:resources mapping="/css/**" location="/css/" />
+	<mvc:resources mapping="/datePicker/**" location="/datePicker/" />
+	<mvc:resources mapping="/img/**" location="/img/" />
+	<mvc:resources mapping="/js/**" location="/js/" />
+	<mvc:resources mapping="/file/**" location="/file/" />
+	<mvc:default-servlet-handler />
+
+	<!--***************************公用部分开始***************************-->
+
+	<bean name="/main.htm" class="com.energysh.egame.web.RedirectControl"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/main.jsp" />
+	</bean>
+
+	<bean name="/top.htm" class="com.energysh.egame.web.RedirectControl"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/top.jsp" />
+	</bean>
+
+	<bean name="/left.htm" class="com.energysh.egame.web.RedirectControl"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/left.jsp" />
+	</bean>
+
+	<bean name="/welcome.htm" class="com.energysh.egame.web.RedirectControl"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/welcome.jsp" />
+	</bean>
+
+	<bean name="/downloadPic.htm" class="com.energysh.egame.web.DownloadPictureCtrl"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/downloadApp.htm" class="com.energysh.egame.web.DownloadAppCtrl"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/downloadAppList.htm" class="com.energysh.egame.web.DownloadAppListCtrl"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appStoreApi" class="com.energysh.egame.web.rs.InterfaceController"
+		parent="baseController" autowire="byName" />
+		
+	<bean name="/testApi" class="com.energysh.egame.test.TestCtrl"
+		parent="baseController" autowire="byName" />
+
+	<!--***************************公用部分结束***************************-->
+
+	<!--***************************应用管理开始***************************-->
+
+	<bean name="/app/toQuery_in.htm" class="com.energysh.egame.web.app.ToQuery"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/app/query_in.jsp" />
+	</bean>
+
+	<bean name="/app/toAdd_in.htm" class="com.energysh.egame.web.app.ToAdd"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/app/add_in.jsp" />
+	</bean>
+
+	<bean name="/app/view_in.htm" class="com.energysh.egame.web.app.ToUp"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/app/view_in.jsp" />
+	</bean>
+
+	<bean name="/app/toUp_in.htm" class="com.energysh.egame.web.app.ToUp"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/app/up_in.jsp" />
+	</bean>
+
+	<bean name="/app/query_in.htm" class="com.energysh.egame.web.app.Query"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/app/add_in.htm" class="com.energysh.egame.web.app.Add"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/app/up_in.htm" class="com.energysh.egame.web.app.Up"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/app/del_in.htm" class="com.energysh.egame.web.app.Del"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/app/choose_in.htm" class="com.energysh.egame.web.app.Choose"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/app/choose_in.jsp" />
+	</bean>
+
+	<!--***************************应用管理结束***************************-->
+
+	<!--***************************专题开始***************************-->
+
+	<bean name="/apptheme/toQuery_in.htm" class="com.energysh.egame.web.apptheme.ToQuery"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/apptheme/query_in.jsp" />
+	</bean>
+
+	<bean name="/apptheme/toAdd_in.htm" class="com.energysh.egame.web.apptheme.ToAdd"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/apptheme/add_in.jsp" />
+	</bean>
+
+	<bean name="/apptheme/toUp_in.htm" class="com.energysh.egame.web.apptheme.ToUp"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/apptheme/up_in.jsp" />
+	</bean>
+
+	<bean name="/apptheme/query_in.htm" class="com.energysh.egame.web.apptheme.Query"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/apptheme/add_in.htm" class="com.energysh.egame.web.apptheme.Add"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/apptheme/up_in.htm" class="com.energysh.egame.web.apptheme.Up"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/apptheme/del_in.htm" class="com.energysh.egame.web.apptheme.Del"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/apptheme/sort_in.htm" class="com.energysh.egame.web.apptheme.Sort"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/apptheme/choose_in.htm" class="com.energysh.egame.web.apptheme.Choose"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/apptheme/choose_in.jsp" />
+	</bean>
+
+	<!--***************************专题结束***************************-->
+
+	<!--***************************专题包开始***************************-->
+
+	<bean name="/appthemebag/toQuery_in.htm" class="com.energysh.egame.web.appthemebag.ToQuery"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/appthemebag/query_in.jsp" />
+	</bean>
+
+	<bean name="/appthemebag/toAdd_in.htm" class="com.energysh.egame.web.appthemebag.ToAdd"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/appthemebag/add_in.jsp" />
+	</bean>
+
+	<bean name="/appthemebag/toUp_in.htm" class="com.energysh.egame.web.appthemebag.ToUp"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/appthemebag/up_in.jsp" />
+	</bean>
+
+	<bean name="/appthemebag/query_in.htm" class="com.energysh.egame.web.appthemebag.Query"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appthemebag/add_in.htm" class="com.energysh.egame.web.appthemebag.Add"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appthemebag/up_in.htm" class="com.energysh.egame.web.appthemebag.Up"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appthemebag/del_in.htm" class="com.energysh.egame.web.appthemebag.Del"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appthemebag/sort_in.htm" class="com.energysh.egame.web.appthemebag.Sort"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appthemebag/choose_in.htm" class="com.energysh.egame.web.appthemebag.Choose"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/appthemebag/choose_in.jsp" />
+	</bean>
+
+	<!--***************************专题包结束***************************-->
+
+	<!--***************************专题包排版开始***************************-->
+
+	<bean name="/appthemebagsort/toQuery_in.htm" class="com.energysh.egame.web.appthemebagsort.ToQuery"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/appthemebagsort/query_in.jsp" />
+	</bean>
+
+	<bean name="/appthemebagsort/toAdd_in.htm" class="com.energysh.egame.web.appthemebagsort.ToAdd"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/appthemebagsort/add_in.jsp" />
+	</bean>
+
+	<bean name="/appthemebagsort/toUp_in.htm" class="com.energysh.egame.web.appthemebagsort.ToUp"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/appthemebagsort/up_in.jsp" />
+	</bean>
+
+	<bean name="/appthemebagsort/query_in.htm" class="com.energysh.egame.web.appthemebagsort.Query"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appthemebagsort/add_in.htm" class="com.energysh.egame.web.appthemebagsort.Add"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appthemebagsort/up_in.htm" class="com.energysh.egame.web.appthemebagsort.Up"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appthemebagsort/del_in.htm" class="com.energysh.egame.web.appthemebagsort.Del"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appthemebagsort/sort_in.htm" class="com.energysh.egame.web.appthemebagsort.Sort"
+		parent="baseController" autowire="byName" />
+
+	<!--***************************专题包排版结束***************************-->
+	
+	<!--***************************专题包排版三星开始***************************-->
+
+	<bean name="/appthemebagsortsx/toQuery_in.htm" class="com.energysh.egame.web.appthemebagsort.sx.ToQuery"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/appthemebagsort_sx/query_in.jsp" />
+	</bean>
+
+	<bean name="/appthemebagsortsx/toAdd_in.htm" class="com.energysh.egame.web.appthemebagsort.sx.ToAdd"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/appthemebagsort_sx/add_in.jsp" />
+	</bean>
+
+	<bean name="/appthemebagsortsx/toUp_in.htm" class="com.energysh.egame.web.appthemebagsort.sx.ToUp"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/appthemebagsort_sx/up_in.jsp" />
+	</bean>
+
+	<bean name="/appthemebagsortsx/query_in.htm" class="com.energysh.egame.web.appthemebagsort.sx.Query"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appthemebagsortsx/add_in.htm" class="com.energysh.egame.web.appthemebagsort.sx.Add"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appthemebagsortsx/up_in.htm" class="com.energysh.egame.web.appthemebagsort.sx.Up"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appthemebagsortsx/del_in.htm" class="com.energysh.egame.web.appthemebagsort.sx.Del"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appthemebagsortsx/sort_in.htm" class="com.energysh.egame.web.appthemebagsort.sx.Sort"
+		parent="baseController" autowire="byName" />
+
+	<!--***************************专题包排版结束***************************-->
+
+	<!--***************************专题包排版开始***************************-->
+
+	<bean name="/appcategory/toQuery_in.htm" class="com.energysh.egame.web.appcategory.ToQuery"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/appcategory/query_in.jsp" />
+	</bean>
+	<bean name="/appcategory/toUpCategoryGood_in.htm" class="com.energysh.egame.web.appcategory.ToUpCategoryGood"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/appcategory/up_category_good_in.jsp" />
+	</bean>
+	<bean name="/appcategory/upCategoryGood_in.htm" class="com.energysh.egame.web.appcategory.UpCategoryGood"
+		parent="baseController" autowire="byName" />
+
+
+	<bean name="/appcategory/toAdd_in.htm" class="com.energysh.egame.web.appcategory.ToAdd"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/appcategory/add_in.jsp" />
+	</bean>
+
+	<bean name="/appcategory/toUp_in.htm" class="com.energysh.egame.web.appcategory.ToUp"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/appcategory/up_in.jsp" />
+	</bean>
+
+	<bean name="/appcategory/view_in.htm" class="com.energysh.egame.web.appcategory.ToUp"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/appcategory/view_in.jsp" />
+	</bean>
+
+	<bean name="/appcategory/query_in.htm" class="com.energysh.egame.web.appcategory.Query"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appcategory/add_in.htm" class="com.energysh.egame.web.appcategory.Add"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appcategory/up_in.htm" class="com.energysh.egame.web.appcategory.Up"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appcategory/del_in.htm" class="com.energysh.egame.web.appcategory.Del"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appcategory/getListByFatherId_in.htm" class="com.energysh.egame.web.appcategory.QuerySub"
+		parent="baseController" autowire="byName" />
+
+	<!--***************************专题包排版结束***************************-->
+
+	<!--***************************登陆开始***************************-->
+
+	<bean name="/tologin_out.htm" class="com.energysh.egame.web.login.ToLogin"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/login.jsp" />
+	</bean>
+
+	<bean name="/login_out.htm" class="com.energysh.egame.web.login.Login"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/verifycode_out.htm" class="com.energysh.egame.web.login.VerifyCode"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/outlogin_out.htm" class="com.energysh.egame.web.login.Logout"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/login.jsp" />
+	</bean>
+
+	<bean name="/left_out.htm" class="com.energysh.egame.web.login.Left"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/left_out.jsp" />
+	</bean>
+
+	<bean name="/top_out.htm" class="com.energysh.egame.web.login.Top"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/top_out.jsp" />
+	</bean>
+
+	<bean name="/welcome_out.htm" class="com.energysh.egame.web.login.Welcome"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/welcome_out.jsp" />
+	</bean>
+
+	<bean name="/main_out.htm" class="com.energysh.egame.web.RedirectControl"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/main_out.jsp" />
+	</bean>
+
+	<bean name="/menutree_out.htm" class="com.energysh.egame.web.login.MenuTree"
+		parent="baseController" autowire="byName" />
+
+	<!--***************************登陆结束***************************-->
+
+	<!--***************************外部-用户修改密码开始***************************-->
+
+	<bean name="/user/toUpLps_out.htm" class="com.energysh.egame.web.RedirectControl"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/user/upLps_out.jsp" />
+	</bean>
+
+	<bean name="/user/upLps_out.htm" class="com.energysh.egame.web.login.UpLps"
+		parent="baseController" autowire="byName" />
+
+	<!--***************************外部-用户修改密码结束***************************-->
+
+	<!--***************************应用数据统计开始***************************-->
+
+	<bean name="/appstatistics/toQuery_in.htm" class="com.energysh.egame.web.RedirectControl"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/appstatistics/query_in.jsp" />
+	</bean>
+
+	<bean name="/appstatistics/query_in.htm" class="com.energysh.egame.web.appstatistics.Query"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appstatistics/toQuery_out.htm" class="com.energysh.egame.web.RedirectControl"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/appstatistics/query_out.jsp" />
+	</bean>
+
+	<bean name="/appstatistics/query_out.htm" class="com.energysh.egame.web.appstatistics.Query"
+		parent="baseController" autowire="byName" />
+
+	<!--***************************应用数据统计结束***************************-->
+
+	<!--***************************销售设置开始***************************-->
+
+	<bean name="/sales/toQuery_in.htm" class="com.energysh.egame.web.sales.ToQuery"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/sales/query_in.jsp" />
+	</bean>
+
+	<bean name="/sales/toAdd_in.htm" class="com.energysh.egame.web.sales.ToAdd"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/sales/add_in.jsp" />
+	</bean>
+
+	<bean name="/sales/query_in.htm" class="com.energysh.egame.web.sales.Query"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/sales/add_in.htm" class="com.energysh.egame.web.sales.Add"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/sales/del_in.htm" class="com.energysh.egame.web.sales.Del"
+		parent="baseController" autowire="byName" />
+
+	<!--***************************销售设置结束***************************-->
+
+	<!--***************************创建账号开始***************************-->
+
+	<bean name="/account/toQuery_in.htm" class="com.energysh.egame.web.account.ToQuery"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/account/query_in.jsp" />
+	</bean>
+
+	<bean name="/account/toAdd_in.htm" class="com.energysh.egame.web.account.ToAdd"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/account/add_in.jsp" />
+	</bean>
+
+	<bean name="/account/toUp_in.htm" class="com.energysh.egame.web.account.ToUp"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/account/up_in.jsp" />
+	</bean>
+
+	<bean name="/account/query_in.htm" class="com.energysh.egame.web.account.Query"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/account/add_in.htm" class="com.energysh.egame.web.account.Add"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/account/up_in.htm" class="com.energysh.egame.web.account.Up"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/account/getName_in.htm" class="com.energysh.egame.web.account.GetList"
+		parent="baseController" autowire="byName" />
+
+	<!--***************************创建账号结束***************************-->
+
+	<!--***************************设置昨日收益开始***************************-->
+
+	<bean name="/yesincome/toQuery_in.htm" class="com.energysh.egame.web.yesincome.ToQuery"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/yesincome/query_in.jsp" />
+	</bean>
+
+	<bean name="/yesincome/query_in.htm" class="com.energysh.egame.web.yesincome.Query"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/yesincome/add_in.htm" class="com.energysh.egame.web.yesincome.Add"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/yesincome/toQuery_out.htm" class="com.energysh.egame.web.yesincome.ToQuery"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/yesincome/query_out.jsp" />
+	</bean>
+
+	<bean name="/yesincome/query_out.htm" class="com.energysh.egame.web.yesincome.Query"
+		parent="baseController" autowire="byName" />
+
+	<!--***************************设置昨日收益结束***************************-->
+
+	<!--***************************生成批次号开始***************************-->
+
+	<bean name="/genbatch/toQuery_in.htm" class="com.energysh.egame.web.genbatch.ToQuery"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/genbatch/query_in.jsp" />
+	</bean>
+
+	<bean name="/genbatch/toAdd_in.htm" class="com.energysh.egame.web.genbatch.ToAdd"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/genbatch/add_in.jsp" />
+	</bean>
+
+	<bean name="/genbatch/query_in.htm" class="com.energysh.egame.web.genbatch.Query"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/genbatch/add_in.htm" class="com.energysh.egame.web.genbatch.Add"
+		parent="baseController" autowire="byName" />
+
+	<!--***************************生成批次号结束***************************-->
+
+	<!--***************************合作商收益设置开始***************************-->
+
+	<bean name="/partnersincomeconf/toQuery_in.htm" class="com.energysh.egame.web.partnersincomeconf.ToQuery"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/partnersincomeconf/query_in.jsp" />
+	</bean>
+	
+	<bean name="/partnersincomeconf/query_in.htm" class="com.energysh.egame.web.partnersincomeconf.Query"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/partnersincomeconf/toUp_in.htm" class="com.energysh.egame.web.partnersincomeconf.ToUp"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/partnersincomeconf/up_in.jsp" />
+	</bean>
+
+	<bean name="/partnersincomeconf/up_in.htm" class="com.energysh.egame.web.partnersincomeconf.Up"
+		parent="baseController" autowire="byName" />
+
+	<!--***************************合作商收益设置结束***************************-->
+
+	<!--***************************设置CPS收益开始***************************-->
+
+	<bean name="/cpsincome/toQuery_in.htm" class="com.energysh.egame.web.cpsincome.ToQuery"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/cpsincome/query_in.jsp" />
+	</bean>
+
+	<bean name="/cpsincome/query_in.htm" class="com.energysh.egame.web.cpsincome.Query"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/cpsincome/add_in.htm" class="com.energysh.egame.web.cpsincome.Add"
+		parent="baseController" autowire="byName" />
+
+	<!--***************************设置CPS收益结束***************************-->
+
+	<!--***************************发布收益开始***************************-->
+
+	<bean name="/pubuserincome/toQuery_in.htm" class="com.energysh.egame.web.pubuserincome.ToQuery"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/pubuserincome/query_in.jsp" />
+	</bean>
+
+	<bean name="/pubuserincome/getList_in.htm" class="com.energysh.egame.web.pubuserincome.GetList"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/pubuserincome/add_in.htm" class="com.energysh.egame.web.pubuserincome.Add"
+		parent="baseController" autowire="byName" />
+
+	<!--***************************发布收益结束***************************-->
+
+</beans>

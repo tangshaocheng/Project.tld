@@ -1,0 +1,41 @@
+@charset "utf-8";
+table.listView{
+	width: 800px;
+	border-collapse: collapse;
+	border-top: 1px solid #4680CC;
+	border-left:1px solid #4680CC;
+	border-bottom: 1px solid #4680CC;
+	border-right: 1px solid #4680CC;
+}
+table.listView th{
+	font-size: 14px;
+	font-weight: bold;
+	color: #001212;
+	background: url(../img/bg-t.gif) repeat-x;
+	height: 31px;
+	text-indent: 11px;
+	margin-top: 1px;
+	margin-bottom: 1px;
+	border-top: 1px solid #4680CC;
+	border-bottom: 1px solid #4680CC;
+	border-left: 1px solid #4680CC;
+	border-right: 1px solid #4680CC;
+}
+table.listView td{
+	color: #001212;
+	text-align: center;
+	border:1px solid #4680CC;
+	padding-left: 8px;
+	padding-right:8px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+    border-top: 1px solid #4680CC;
+	border-left:1px solid #4680CC;
+	border-bottom: 1px solid #4680CC;
+	border-right: 1px solid #4680CC;
+}
+.tabCss{
+	font-size: 14px;
+	font-weight: bold;
+	color: #4680CC;
+}

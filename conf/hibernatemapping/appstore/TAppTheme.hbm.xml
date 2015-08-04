@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.energysh.egame.po.appstore.TAppTheme" table="t_app_theme">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="name" type="java.lang.String">
+			<column name="name" length="50" />
+		</property>
+		<property name="pic" type="java.lang.String">
+			<column name="pic" length="500" />
+		</property>
+		<property name="title" type="java.lang.String">
+			<column name="title" />
+		</property>
+		<property name="type" type="java.lang.String">
+			<column name="type" />
+		</property>
+		<property name="rtype" type="java.lang.String">
+			<column name="rtype" />
+		</property>
+		<property name="des" type="java.lang.String">
+			<column name="des"/>
+		</property>
+		<property name="ctime" type="timestamp">
+			<column name="ctime" />
+		</property>
+	</class>
+</hibernate-mapping>

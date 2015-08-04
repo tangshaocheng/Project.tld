@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.energysh.egame.po.appstore.TMacLastBatch" table="t_mac_last_batch">
+		<composite-id name="id" class="com.energysh.egame.po.appstore.TMacLastBatchId">
+			<key-property name="mac" type="java.lang.String">
+				<column name="mac" length="100" />
+			</key-property>
+			<key-property name="appId" type="java.lang.Integer">
+				<column name="app_id" />
+			</key-property>
+		</composite-id>
+		<property name="firstBatchId" type="java.lang.String">
+			<column name="first_batch_id" length="100" />
+		</property>
+		<property name="lastBatchId" type="java.lang.String">
+			<column name="last_batch_id" length="100" />
+		</property>
+		<property name="ctime" type="timestamp">
+			<column name="ctime" />
+		</property>
+	</class>
+</hibernate-mapping>

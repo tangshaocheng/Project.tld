@@ -1,0 +1,39 @@
+table{
+		width: 100%;
+}
+tr.odd{
+		background: #fff;
+	}
+	tr.even{
+		background: #eee;
+}
+
+div.datagrid_div{
+	width: 100%;
+	border: 1px solid #999;
+}
+
+/*****************ÑשÊ½1*******************/
+	table.datagrid1{
+		border-collapse: collapse;
+		border-bottom: 1px solid #666;
+	}
+	table.datagrid1 th{
+		color: #333;
+		padding: 3px;
+		font-family: monospace;
+		background: #9cf;
+		text-align: left;
+		border-top: 1px solid #666;
+		border-bottom: 1px solid #666;
+	}
+	table.datagrid1 td{
+		padding: 3px;
+		border-top: 1px solid #ccc;
+	}
+	/*****************************************/
+
+	tr:hover,
+	tr.hover{
+		background: #9cf;
+	}

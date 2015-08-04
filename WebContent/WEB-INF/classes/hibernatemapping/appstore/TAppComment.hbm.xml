@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.energysh.egame.po.appstore.TAppComment" table="t_app_comment">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="title" type="java.lang.String">
+			<column name="title" length="100" />
+		</property>
+		<property name="appId" type="java.lang.Integer">
+			<column name="app_id" />
+		</property>
+		<property name="userId" type="java.lang.Integer">
+			<column name="user_id" />
+		</property>
+		<property name="nickname" type="java.lang.String">
+			<column name="nickname" length="50" />
+		</property>
+		<property name="grade" type="java.lang.Integer">
+			<column name="grade" />
+		</property>
+		<property name="content" type="java.lang.String">
+			<column name="content" length="1000" />
+		</property>
+		<property name="ctime" type="timestamp">
+			<column name="ctime" />
+		</property>
+		<property name="uptime" type="timestamp">
+			<column name="uptime" />
+		</property>
+	</class>
+</hibernate-mapping>

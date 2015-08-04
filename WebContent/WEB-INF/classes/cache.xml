@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<caches>
+
+	<cache>
+		<service>com.energysh.egame.service.InterfaceService.getCategoryInfo</service>
+		<cacheKey>cType,categoryId,pageNo,pageSize</cacheKey>
+		<expirtTime>3600</expirtTime>
+	</cache>
+
+</caches>

@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.energysh.egame.po.appstore.TApp" table="t_app">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="name" type="java.lang.String">
+			<column name="name" length="256" />
+		</property>
+		<property name="pakeage" type="java.lang.String">
+			<column name="pakeage" length="256" />
+		</property>
+		<property name="embededPakeage" type="java.lang.String">
+			<column name="embeded_pakeage" length="256" />
+		</property>
+		<property name="mainClass" type="java.lang.String">
+			<column name="main_class" length="256" />
+		</property>
+		<property name="embededMainClass" type="java.lang.String">
+			<column name="embeded_main_class" length="256" />
+		</property>
+		<property name="develope" type="java.lang.String">
+			<column name="develope" length="256" />
+		</property>
+		<property name="heat" type="java.lang.Integer">
+			<column name="heat" />
+		</property>
+		<property name="subjectId" type="java.lang.Integer">
+			<column name="subject_id" />
+		</property>
+		<property name="categoryId" type="java.lang.Integer">
+			<column name="category_id" />
+		</property>
+		<property name="versionCode" type="java.lang.Integer">
+			<column name="version_code" />
+		</property>
+		<property name="version" type="java.lang.String">
+			<column name="version" length="100" />
+		</property>
+		<property name="embededVersion" type="java.lang.String">
+			<column name="embeded_version" length="100" />
+		</property>
+		<property name="upDesc" type="java.lang.String">
+			<column name="up_desc" length="2000" />
+		</property>
+		<property name="appDesc" type="java.lang.String">
+			<column name="app_desc" length="2000" />
+		</property>
+		<property name="appSize" type="java.lang.Double">
+			<column name="app_size" precision="11" scale="2" />
+		</property>
+		<property name="embededAppSize" type="java.lang.Double">
+			<column name="embeded_app_size" precision="11" scale="2" />
+		</property>
+		<property name="icon" type="java.lang.String">
+			<column name="icon" length="500" />
+		</property>
+		<property name="app" type="java.lang.String">
+			<column name="app" length="500" />
+		</property>
+		<property name="embededApp" type="java.lang.String">
+			<column name="embeded_app" length="500" />
+		</property>
+		<property name="notify" type="java.lang.String">
+			<column name="notify" length="500" />
+		</property>
+		<property name="notifyStatus" type="java.lang.Integer">
+			<column name="notify_status" />
+		</property>
+		<property name="shareContent" type="java.lang.String">
+			<column name="share_content" length="2000" />
+		</property>
+		<property name="mainPic" type="java.lang.String">
+			<column name="main_pic" length="500" />
+		</property>
+		<property name="mainPic2" type="java.lang.String">
+			<column name="main_pic2" length="500" />
+		</property>
+		<property name="downCnt" type="java.lang.Integer">
+			<column name="down_cnt" />
+		</property>
+		<property name="pic1" type="java.lang.String">
+			<column name="pic1" length="500" />
+		</property>
+		<property name="pic2" type="java.lang.String">
+			<column name="pic2" length="500" />
+		</property>
+		<property name="pic3" type="java.lang.String">
+			<column name="pic3" length="500" />
+		</property>
+		<property name="pic4" type="java.lang.String">
+			<column name="pic4" length="500" />
+		</property>
+		<property name="pic5" type="java.lang.String">
+			<column name="pic5" length="500" />
+		</property>
+		<property name="appSource" type="java.lang.Integer">
+			<column name="app_source" />
+		</property>
+		<property name="appStatus" type="java.lang.Integer">
+			<column name="app_status" />
+		</property>
+		<property name="sourceUrl" type="java.lang.String">
+			<column name="source_url" length="500" />
+		</property>
+		<property name="support" type="java.lang.String">
+			<column name="support" length="256" />
+		</property>
+		<property name="osVersionMin" type="java.lang.String">
+			<column name="os_version_min" length="256" />
+		</property>
+		<property name="appTag" type="java.lang.String">
+			<column name="app_tag" length="500" />
+		</property>
+		<property name="singleWord" type="java.lang.String">
+			<column name="single_word"/>
+		</property>
+		<property name="ageLimit" type="java.lang.String">
+			<column name="age_limit" length="200" />
+		</property>
+		<property name="uptime" type="timestamp">
+			<column name="uptime" />
+		</property>
+		<property name="ctime" type="timestamp">
+			<column name="ctime" />
+		</property>
+	</class>
+</hibernate-mapping>
