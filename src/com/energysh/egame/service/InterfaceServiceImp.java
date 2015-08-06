@@ -1,7 +1,6 @@
 package com.energysh.egame.service;
 
 import java.io.IOException;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.stereotype.Service;
 
 import com.energysh.egame.dao.BaseDao;
 import com.energysh.egame.exception.AppBizException;

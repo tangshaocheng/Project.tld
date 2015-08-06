@@ -29,8 +29,7 @@ public class TAppCategoryHot implements java.io.Serializable {
 	}
 
 	/** full constructor */
-	public TAppCategoryHot(Integer appId, Integer categoryId, Integer count,
-			Date ctime) {
+	public TAppCategoryHot(Integer appId, Integer categoryId, Integer count, Date ctime) {
 		this.appId = appId;
 		this.categoryId = categoryId;
 		this.count = count;

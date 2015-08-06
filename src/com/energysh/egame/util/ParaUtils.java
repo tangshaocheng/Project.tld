@@ -2,6 +2,7 @@ package com.energysh.egame.util;
 
 import java.net.URLEncoder;
 
+import org.apache.commons.configuration.EnvironmentConfiguration;
 import org.apache.commons.lang.StringUtils;
 
 import com.energysh.egame.exception.AppBizException;

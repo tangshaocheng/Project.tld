@@ -6,8 +6,7 @@ public class SpringBeanProxy {
 
 	private static ApplicationContext applicationContext;
 
-	public synchronized static void setApplicationContext(
-			ApplicationContext applicationContext) {
+	public synchronized static void setApplicationContext(ApplicationContext applicationContext) {
 		SpringBeanProxy.applicationContext = applicationContext;
 	}
 

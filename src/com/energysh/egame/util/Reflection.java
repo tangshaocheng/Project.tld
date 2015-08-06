@@ -21,16 +21,14 @@ public class Reflection {
 		return property;
 	}
 
-	public Object getStaticProperty(String className, String fieldName)
-			throws Exception {
+	public Object getStaticProperty(String className, String fieldName) throws Exception {
 		Class ownerClass = Class.forName(className);
 		Field field = ownerClass.getField(fieldName);
 		Object property = field.get(ownerClass);
 		return property;
 	}
 
-	public Object invokeMethod(Object owner, String methodName, Object[] args)
-			throws Exception {
+	public Object invokeMethod(Object owner, String methodName, Object[] args) throws Exception {
 		Class ownerClass = owner.getClass();
 		Class[] argsClass = new Class[args.length];
 		for (int i = 0, j = args.length; i < j; i++) {
@@ -40,14 +38,12 @@ public class Reflection {
 		return method.invoke(owner, args);
 	}
 
-	public Object invokeMethodValuNull(Object owner, String methodName,
-			Class arg) throws Exception {
+	public Object invokeMethodValuNull(Object owner, String methodName, Class arg) throws Exception {
 		Method method = owner.getClass().getMethod(methodName, arg);
 		return method.invoke(owner, new Object[] { null });
 	}
 
-	public Object invokeStaticMethod(String className, String methodName,
-			Object[] args) throws Exception {
+	public Object invokeStaticMethod(String className, String methodName, Object[] args) throws Exception {
 		Class ownerClass = Class.forName(className);
 		Class[] argsClass = new Class[args.length];
 		for (int i = 0, j = args.length; i < j; i++) {

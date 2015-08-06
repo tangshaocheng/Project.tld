@@ -28,11 +28,11 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 
+@SuppressWarnings("unchecked")
 public class Utils {
 
 	public static String getRandom(int length) {
-		String seed = "abcd2wefg3da45678hijklmnopqrstuvwxyzABcdhnCDsxqaEFGHIJKLMNOPQRSTUVWXYZ"
-				+ System.currentTimeMillis();
+		String seed = "abcd2wefg3da45678hijklmnopqrstuvwxyzABcdhnCDsxqaEFGHIJKLMNOPQRSTUVWXYZ" + System.currentTimeMillis();
 		String orderNo = "";
 		SecureRandom random = new SecureRandom();
 		for (int i = 0; i < length; i++) {
@@ -71,8 +71,7 @@ public class Utils {
 	public static Double round(Double value, int scale) {
 		double result = 0.0;
 		if (null != value) {
-			result = new BigDecimal(String.valueOf(value)).setScale(scale,
-					RoundingMode.HALF_UP).doubleValue();
+			result = new BigDecimal(String.valueOf(value)).setScale(scale, RoundingMode.HALF_UP).doubleValue();
 		}
 		return result;
 	}
@@ -92,10 +91,7 @@ public class Utils {
 		return t.toString() + n.toString();
 	}
 
-	public static Object invokeMethod(Object obj, String methodName,
-			Object[] args) throws SecurityException, IllegalArgumentException,
-			NoSuchMethodException, IllegalAccessException,
-			InvocationTargetException {
+	public static Object invokeMethod(Object obj, String methodName, Object[] args) throws SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		Reflection rf = Reflection.getInstance();
 		try {
 			return rf.invokeMethod(obj, methodName, args);
@@ -105,8 +101,7 @@ public class Utils {
 		return null;
 	}
 
-	public static Object invokeMethodValuNull(Object owner, String methodName,
-			Class arg) throws Exception {
+	public static Object invokeMethodValuNull(Object owner, String methodName, Class arg) throws Exception {
 		Reflection rf = Reflection.getInstance();
 		return rf.invokeMethodValuNull(owner, methodName, arg);
 	}
@@ -135,11 +130,8 @@ public class Utils {
 
 	public static Date getDate(String date) {
 		String[] dates = StringUtils.split(date, "-");
-		GregorianCalendar gc = (GregorianCalendar) GregorianCalendar
-				.getInstance();
-		gc.set(new Integer(dates[0]).intValue(),
-				new Integer(dates[1]).intValue() - 1,
-				new Integer(dates[2]).intValue());
+		GregorianCalendar gc = (GregorianCalendar) GregorianCalendar.getInstance();
+		gc.set(new Integer(dates[0]).intValue(), new Integer(dates[1]).intValue() - 1, new Integer(dates[2]).intValue());
 		return gc.getTime();
 	}
 
@@ -172,19 +164,16 @@ public class Utils {
 	}
 
 	public static Date TimestampToDate(java.sql.Timestamp tt) {
-		GregorianCalendar gc = (GregorianCalendar) GregorianCalendar
-				.getInstance();
+		GregorianCalendar gc = (GregorianCalendar) GregorianCalendar.getInstance();
 		gc.setTimeInMillis(tt.getTime());
 		return gc.getTime();
 	}
 
 	public static String formateDate(Date date, String pattern) {
-		return org.apache.commons.lang.time.DateFormatUtils.format(date,
-				pattern);
+		return org.apache.commons.lang.time.DateFormatUtils.format(date, pattern);
 	}
 
-	public static void map2Object(Map<String, String> para, Object obj)
-			throws Exception {
+	public static void map2Object(Map<String, String> para, Object obj) throws Exception {
 		java.lang.reflect.Field[] fs = obj.getClass().getDeclaredFields();
 		String ftype = "";
 		Object value;
@@ -195,39 +184,34 @@ public class Utils {
 			ftype = f.getType().toString().toLowerCase();
 			value = para.get(f.getName());
 			if (ftype.indexOf("string") != -1) {
-				invokeMethod(obj, getSeterr(f.getName()),
-						new Object[] { value });
+				invokeMethod(obj, getSeterr(f.getName()), new Object[] { value });
 				continue;
 			}
 			if (ftype.indexOf("long") != -1) {
 				if (!isNumber(value.toString()))
 					continue;
 				value = Long.valueOf(value.toString());
-				invokeMethod(obj, getSeterr(f.getName()),
-						new Object[] { value });
+				invokeMethod(obj, getSeterr(f.getName()), new Object[] { value });
 				continue;
 			}
 			if (ftype.indexOf("date") != -1) {
 				value = getDate(value.toString());
 				// value = getAllDatePart(value.toString());
-				invokeMethod(obj, getSeterr(f.getName()),
-						new Object[] { value });
+				invokeMethod(obj, getSeterr(f.getName()), new Object[] { value });
 				continue;
 			}
 			if (ftype.indexOf("integer") != -1) {
 				if (!isNumber(value.toString()))
 					continue;
 				value = Integer.valueOf(value.toString());
-				invokeMethod(obj, getSeterr(f.getName()),
-						new Object[] { value });
+				invokeMethod(obj, getSeterr(f.getName()), new Object[] { value });
 				continue;
 			}
 			if (ftype.indexOf("double") != -1) {
 				if (!isNumber(value.toString()))
 					continue;
 				value = Double.valueOf(value.toString());
-				invokeMethod(obj, getSeterr(f.getName()),
-						new Object[] { value });
+				invokeMethod(obj, getSeterr(f.getName()), new Object[] { value });
 				continue;
 			}
 
@@ -235,8 +219,7 @@ public class Utils {
 	}
 
 	private static String getSeterr(String f) {
-		return "set" + f.substring(0, 1).toUpperCase()
-				+ f.substring(1, f.length());
+		return "set" + f.substring(0, 1).toUpperCase() + f.substring(1, f.length());
 	}
 
 	public static boolean isAllLetter(String inString) {
@@ -250,8 +233,7 @@ public class Utils {
 	}
 
 	public static boolean isPhone(String phone) {
-		Pattern p = Pattern
-				.compile("^13[0-9]{1}[0-9]{8}$|15[0125689]{1}[0-9]{8}$|18[0-3,5-9]{1}[0-9]{8}$");
+		Pattern p = Pattern.compile("^13[0-9]{1}[0-9]{8}$|15[0125689]{1}[0-9]{8}$|18[0-3,5-9]{1}[0-9]{8}$");
 		Matcher m = p.matcher(phone);
 		return m.matches();
 	}
@@ -263,8 +245,7 @@ public class Utils {
 	}
 
 	public static boolean isEmail(String email) {
-		Pattern p = Pattern
-				.compile("\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
+		Pattern p = Pattern.compile("\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
 		Matcher m = p.matcher(email);
 		return m.matches();
 	}
@@ -430,8 +411,7 @@ public class Utils {
 	 */
 	public static boolean deleteDirectory(File dir) {
 		if ((dir == null) || !dir.isDirectory()) {
-			throw new IllegalArgumentException("Argument " + dir
-					+ " is not a directory. ");
+			throw new IllegalArgumentException("Argument " + dir + " is not a directory. ");
 		}
 		File[] entries = dir.listFiles();
 		for (int i = 0; i < entries.length; i++) {
@@ -490,8 +470,7 @@ public class Utils {
 
 	// 获取上上周星期一的日期
 	public static String getBeforeLastWeekday() throws Exception {
-		Date previousWeekday = new SimpleDateFormat("yyyy-MM-dd")
-				.parse(getPreviousWeekday()); // 上周星期一日期
+		Date previousWeekday = new SimpleDateFormat("yyyy-MM-dd").parse(getPreviousWeekday()); // 上周星期一日期
 		Date beforeLastWeekday = getDateBefore(previousWeekday, 7);
 
 		return new SimpleDateFormat("yyyy-MM-dd").format(beforeLastWeekday);
@@ -499,8 +478,7 @@ public class Utils {
 
 	// 获取上上周星期日的日期
 	public static String getBeforeLastWeekSunday() throws Exception {
-		Date previousWeekSunday = new SimpleDateFormat("yyyy-MM-dd")
-				.parse(getPreviousWeekSunday()); // 上周星期日期
+		Date previousWeekSunday = new SimpleDateFormat("yyyy-MM-dd").parse(getPreviousWeekSunday()); // 上周星期日期
 		Date beforeLastWeekSunday = getDateBefore(previousWeekSunday, 7);
 
 		return new SimpleDateFormat("yyyy-MM-dd").format(beforeLastWeekSunday);
@@ -689,7 +667,7 @@ public class Utils {
 	}
 
 	/**
-	 * 得到Sql(包含在某一个厂商出厂手机注册的用户的columnName集合里)
+	 *得到Sql(包含在某一个厂商出厂手机注册的用户的columnName集合里)
 	 * 
 	 * @param userList
 	 * @return
@@ -731,8 +709,7 @@ public class Utils {
 		StringBuffer md5StrBuff = new StringBuffer();
 		for (int i = 0; i < byteArray.length; i++) {
 			if (Integer.toHexString(0xFF & byteArray[i]).length() == 1)
-				md5StrBuff.append("0").append(
-						Integer.toHexString(0xFF & byteArray[i]));
+				md5StrBuff.append("0").append(Integer.toHexString(0xFF & byteArray[i]));
 			else
 				md5StrBuff.append(Integer.toHexString(0xFF & byteArray[i]));
 		}
