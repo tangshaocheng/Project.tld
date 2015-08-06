@@ -60,6 +60,7 @@ public class TaskServiceImp extends BaseService implements TaskService {
 		int pageNo = 0;
 		int pageSize = 10000;
 		Long ss = (Long) this.getAppstoreDao().findObject("select count(id) from TApp a where a.appSource=?", new Object[] { 1 });
+		logger.info("奇虎应用个数："+ss);
 		int maxSize = ss.intValue();
 		int allPage = 0;
 		if (maxSize % pageSize == 0)
@@ -82,12 +83,14 @@ public class TaskServiceImp extends BaseService implements TaskService {
 
 					String sign = Utils.getMD5Str(Utils.sortMap(map) + MyConfigurer.getEvn("qhSecret"));
 					map.put("sign", sign);
+					String res = "";
 					try {
 						Thread.sleep(1000);
+						res  = HttpUtils.sendGet(MyConfigurer.getEvn("qhMobiApiUrlApp"), map);
 					} catch (InterruptedException e1) {
 						e1.printStackTrace();
 					}
-					String res = HttpUtils.sendGet(MyConfigurer.getEvn("qhMobiApiUrlApp"), map);
+					if("".equals(res)) continue;
 
 					JSONObject resObj = JSONObject.fromObject(res);
 					JSONArray itemList = JSONArray.fromObject(resObj.get("items"));
@@ -95,20 +98,24 @@ public class TaskServiceImp extends BaseService implements TaskService {
 					for (Object oo : itemList) {
 						JSONObject mm = (JSONObject) oo;
 						String pic1 = "", pic2 = "", pic3 = "", pic4 = "", pic5 = "";
-						String[] url = mm.getString("screenshotsUrl").split(",");
-						for (int i = 0; i < url.length; i++) {
-							switch (i) {
-							case 0:
-								pic1 = (url[i]);
-							case 1:
-								pic2 = (url[i]);
-							case 2:
-								pic3 = (url[i]);
-							case 3:
-								pic4 = (url[i]);
-							case 4:
-								pic5 = (url[i]);
+						try{
+							String[] url = mm.getString("screenshotsUrl").split(",");
+							for (int i = 0; i < url.length; i++) {
+								switch (i) {
+								case 0:
+									pic1 = (url[i]);
+								case 1:
+									pic2 = (url[i]);
+								case 2:
+									pic3 = (url[i]);
+								case 3:
+									pic4 = (url[i]);
+								case 4:
+									pic5 = (url[i]);
+								}
 							}
+						} catch(Exception e) {
+							e.printStackTrace();
 						}
 
 						app.setVersionCode(Integer.valueOf(mm.getString("versionCode")));
@@ -127,6 +134,7 @@ public class TaskServiceImp extends BaseService implements TaskService {
 						app.setPic3(pic3);
 						app.setPic4(pic4);
 						app.setPic5(pic5);
+						//app.setCuptime(new Date());
 						app.setUptime(Utils.getAllDatePart(mm.getString("updateTime")));
 						app.setAppTag(mm.getString("tag"));
 						app.setSingleWord(mm.getString("description"));
