@@ -117,7 +117,7 @@
 			<column name="app_tag" length="500" />
 		</property>
 		<property name="singleWord" type="java.lang.String">
-			<column name="single_word"/>
+			<column name="single_word" />
 		</property>
 		<property name="ageLimit" type="java.lang.String">
 			<column name="age_limit" length="200" />
@@ -125,6 +125,8 @@
 		<property name="uptime" type="timestamp">
 			<column name="uptime" />
 		</property>
+		<!-- <property name="cuptime" type="timestamp"> <column name="cuptime" 
+			/> </property> -->
 		<property name="ctime" type="timestamp">
 			<column name="ctime" />
 		</property>

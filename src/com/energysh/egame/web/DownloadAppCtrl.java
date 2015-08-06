@@ -1,6 +1,7 @@
 package com.energysh.egame.web;
 
 import java.io.File;
+
 import java.io.FileInputStream;
 
 import javax.servlet.http.HttpServletResponse;
@@ -11,7 +12,6 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.energysh.egame.service.InterfaceService;
-import com.energysh.egame.util.Constants;
 import com.energysh.egame.util.Servlets;
 import com.energysh.egame.web.rs.InterfaceController;
 

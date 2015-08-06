@@ -16,8 +16,10 @@ public class MemcachedUtil {
 	private static MemcachedUtil memUtil = new MemcachedUtil();
 
 	static {
-		String[] server = EnvConfigurer.getEvn("memcache.ttserver").split("[:]");
-		InetSocketAddress ica = new InetSocketAddress(server[0], Integer.parseInt(server[1]));
+		String[] server = EnvConfigurer.getEvn("memcache.ttserver")
+				.split("[:]");
+		InetSocketAddress ica = new InetSocketAddress(server[0],
+				Integer.parseInt(server[1]));
 		try {
 			memClient = new MemcachedClient(ica);
 		} catch (IOException e) {
@@ -29,17 +31,20 @@ public class MemcachedUtil {
 		return memUtil;
 	}
 
-	public Future<Boolean> add(String key, int timeout, Object value) throws TimeoutException, InterruptedException {
+	public Future<Boolean> add(String key, int timeout, Object value)
+			throws TimeoutException, InterruptedException {
 
 		Future<Boolean> future = memClient.add(key, timeout, value);
 		return future;
 	}
 
-	public Future<Boolean> add(String key, Object value) throws TimeoutException, InterruptedException {
+	public Future<Boolean> add(String key, Object value)
+			throws TimeoutException, InterruptedException {
 		return add(key, 0, value);
 	}
 
-	public Future<Boolean> delete(String key) throws TimeoutException, InterruptedException {
+	public Future<Boolean> delete(String key) throws TimeoutException,
+			InterruptedException {
 		Future<Boolean> future = memClient.delete(key);
 		return future;
 	}
@@ -48,38 +53,46 @@ public class MemcachedUtil {
 		return memClient.get(key);
 	}
 
-	public Future<Boolean> replace(String key, int timeout, Object value) throws TimeoutException, InterruptedException {
+	public Future<Boolean> replace(String key, int timeout, Object value)
+			throws TimeoutException, InterruptedException {
 		Future<Boolean> future = memClient.replace(key, timeout, value);
 		return future;
 	}
 
-	public Future<Boolean> replace(String key, Object value) throws TimeoutException, InterruptedException {
+	public Future<Boolean> replace(String key, Object value)
+			throws TimeoutException, InterruptedException {
 		return replace(key, 0, value);
 	}
 
-	public Future<Boolean> set(String key, int timeout, Object value) throws TimeoutException, InterruptedException {
+	public Future<Boolean> set(String key, int timeout, Object value)
+			throws TimeoutException, InterruptedException {
 		Future<Boolean> future = memClient.set(key, timeout, value);
 		return future;
 	}
 
-	public Future<Boolean> set(String key, Object value) throws TimeoutException, InterruptedException {
+	public Future<Boolean> set(String key, Object value)
+			throws TimeoutException, InterruptedException {
 		Future<Boolean> future = memClient.set(key, 0, value);
 		return future;
 	}
 
-	public long incr(String key, int step, long initValue) throws TimeoutException, InterruptedException {
+	public long incr(String key, int step, long initValue)
+			throws TimeoutException, InterruptedException {
 		return memClient.incr(key, step, initValue);
 	}
 
-	public long incr(String key, int step) throws TimeoutException, InterruptedException {
+	public long incr(String key, int step) throws TimeoutException,
+			InterruptedException {
 		return memClient.incr(key, step);
 	}
 
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> getMapByKey(String key) throws TimeoutException, InterruptedException {
+	public Map<String, Object> getMapByKey(String key) throws TimeoutException,
+			InterruptedException {
 		Object obj = this.get(key);
 		if (null == obj)
 			return null;
-		return (Map<String, Object>) JSONObject.toBean(JSONObject.fromObject(obj), HashMap.class);
+		return (Map<String, Object>) JSONObject.toBean(
+				JSONObject.fromObject(obj), HashMap.class);
 	}
 }

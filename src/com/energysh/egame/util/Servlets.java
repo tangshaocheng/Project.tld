@@ -52,11 +52,14 @@ public class Servlets {
 	/**
 	 * 设置客户端缓存过期时间 的Header.
 	 */
-	public static void setExpiresHeader(HttpServletResponse response, long expiresSeconds) {
+	public static void setExpiresHeader(HttpServletResponse response,
+			long expiresSeconds) {
 		// Http 1.0 header, set a fix expires date.
-		response.setDateHeader("Expires", System.currentTimeMillis() + expiresSeconds * 1000);
+		response.setDateHeader("Expires", System.currentTimeMillis()
+				+ expiresSeconds * 1000);
 		// Http 1.1 header, set a time after now.
-		response.setHeader("Cache-Control", "private, max-age=" + expiresSeconds);
+		response.setHeader("Cache-Control", "private, max-age="
+				+ expiresSeconds);
 	}
 
 	/**
@@ -73,7 +76,8 @@ public class Servlets {
 	/**
 	 * 设置LastModified Header.
 	 */
-	public static void setLastModifiedHeader(HttpServletResponse response, long lastModifiedDate) {
+	public static void setLastModifiedHeader(HttpServletResponse response,
+			long lastModifiedDate) {
 		response.setDateHeader("Last-Modified", lastModifiedDate);
 	}
 
@@ -92,7 +96,8 @@ public class Servlets {
 	 * @param lastModified
 	 *            内容的最后修改时间.
 	 */
-	public static boolean checkIfModifiedSince(HttpServletRequest request, HttpServletResponse response, long lastModified) {
+	public static boolean checkIfModifiedSince(HttpServletRequest request,
+			HttpServletResponse response, long lastModified) {
 		long ifModifiedSince = request.getDateHeader("If-Modified-Since");
 		if ((ifModifiedSince != -1) && (lastModified < ifModifiedSince + 1000)) {
 			response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
@@ -109,12 +114,14 @@ public class Servlets {
 	 * @param etag
 	 *            内容的ETag.
 	 */
-	public static boolean checkIfNoneMatchEtag(HttpServletRequest request, HttpServletResponse response, String etag) {
+	public static boolean checkIfNoneMatchEtag(HttpServletRequest request,
+			HttpServletResponse response, String etag) {
 		String headerValue = request.getHeader("If-None-Match");
 		if (headerValue != null) {
 			boolean conditionSatisfied = false;
 			if (!"*".equals(headerValue)) {
-				StringTokenizer commaTokenizer = new StringTokenizer(headerValue, ",");
+				StringTokenizer commaTokenizer = new StringTokenizer(
+						headerValue, ",");
 
 				while (!conditionSatisfied && commaTokenizer.hasMoreTokens()) {
 					String currentToken = commaTokenizer.nextToken();
@@ -141,12 +148,15 @@ public class Servlets {
 	 * @param fileName
 	 *            下载后的文件名.
 	 */
-	public static void setFileDownloadHeader(HttpServletResponse response, String fileName) {
+	public static void setFileDownloadHeader(HttpServletResponse response,
+			String fileName) {
 		try {
 			// 中文文件名支持
 			fileName = StringUtils.substringAfterLast(fileName, "/");
-			String encodedfileName = new String(fileName.getBytes(), "ISO8859-1");
-			response.setHeader("Content-Disposition", "attachment; filename=\"" + encodedfileName + "\"");
+			String encodedfileName = new String(fileName.getBytes(),
+					"ISO8859-1");
+			response.setHeader("Content-Disposition", "attachment; filename=\""
+					+ encodedfileName + "\"");
 		} catch (UnsupportedEncodingException e) {
 		}
 	}
@@ -184,7 +194,8 @@ public class Servlets {
 		return paraMap;
 	}
 
-	public static Map<String, String> getJsonPara(ServletRequest request) throws IOException {
+	public static Map<String, String> getJsonPara(ServletRequest request)
+			throws IOException {
 		Map<String, String> paramMap = new HashMap<String, String>();
 		byte[] data = FileCopyUtils.copyToByteArray(request.getInputStream());
 		String jsonData = new String(data, "UTF-8");
@@ -295,7 +306,8 @@ public class Servlets {
 
 	}
 
-	public static String getHttpPostContent(ServletRequest request) throws Exception {
+	public static String getHttpPostContent(ServletRequest request)
+			throws Exception {
 		StringBuffer info = new StringBuffer("");
 		InputStream in = null;
 		BufferedInputStream buf = null;
@@ -323,14 +335,16 @@ public class Servlets {
 		return info.toString();
 	}
 
-	public static void setJsonObject(HttpServletResponse response, Object obj) throws Exception {
+	public static void setJsonObject(HttpServletResponse response, Object obj)
+			throws Exception {
 		response.setContentType("text/plain;charset=utf-8");
 		PrintWriter responseStream = response.getWriter();
 		responseStream.println(JSONObject.fromObject(obj));
 		responseStream.close();
 	}
 
-	public static ModelAndView setJsonResult(HttpServletResponse response, Object obj) throws Exception {
+	public static ModelAndView setJsonResult(HttpServletResponse response,
+			Object obj) throws Exception {
 		response.setContentType("text/plain;charset=utf-8");
 		PrintWriter responseStream = response.getWriter();
 		JSONArray fromObject = JSONArray.fromObject(obj);
@@ -339,7 +353,8 @@ public class Servlets {
 		return null;
 	}
 
-	public static ModelAndView setJsonResult(HttpServletResponse response, Object obj, JsonConfig jsonConfig) throws Exception {
+	public static ModelAndView setJsonResult(HttpServletResponse response,
+			Object obj, JsonConfig jsonConfig) throws Exception {
 		response.setContentType("text/plain;charset=utf-8");
 		PrintWriter responseStream = response.getWriter();
 		responseStream.println(JSONArray.fromObject(obj, jsonConfig));
@@ -368,7 +383,8 @@ public class Servlets {
 		return null;
 	}
 
-	public static String errorObjectAjax(HttpServletResponse response, Exception e) {
+	public static String errorObjectAjax(HttpServletResponse response,
+			Exception e) {
 		e.printStackTrace();
 		try {
 			response.setContentType("text/plain;charset=utf-8");
@@ -417,7 +433,8 @@ public class Servlets {
 				if (begin >= 0) {
 					int end = allCookieStr.indexOf(";", begin);
 					if (end >= 0) {
-						return allCookieStr.substring(begin + name.length(), end);
+						return allCookieStr.substring(begin + name.length(),
+								end);
 					} else {
 						return allCookieStr.substring(begin + name.length());
 					}

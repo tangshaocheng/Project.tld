@@ -61,6 +61,7 @@ public class TApp implements Serializable {
 	private String pic5;
 	/** 更新时间 */
 	private Date uptime;
+	//private Date cuptime;
 	/** 专题名 **/
 	private String categoryName;
 	/** 分类名 **/
@@ -113,6 +114,14 @@ public class TApp implements Serializable {
 	public void setVersion(String version) {
 		this.version = version;
 	}
+
+//	public Date getCuptime() {
+//		return cuptime;
+//	}
+//
+//	public void setCuptime(Date cuptime) {
+//		this.cuptime = cuptime;
+//	}
 
 	public Integer getCategoryId() {
 		return categoryId;

@@ -37,7 +37,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 
-@SuppressWarnings("unchecked")
 public class MyUtil {
 
 	private final static Log log = LogFactory.getLog(MyUtil.class);
