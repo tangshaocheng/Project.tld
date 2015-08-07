@@ -27,4 +27,5 @@ public interface DeviceMacInfoService {
 
 	public Map<String, TUserAppInfo> getAppFromUserInfo(String packageInfo,
 			String mac);
+
 }

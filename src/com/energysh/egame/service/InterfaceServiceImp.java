@@ -1,6 +1,7 @@
 package com.energysh.egame.service;
 
 import java.io.IOException;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,7 +21,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
-import org.springframework.stereotype.Service;
 
 import com.energysh.egame.dao.BaseDao;
 import com.energysh.egame.exception.AppBizException;
@@ -36,6 +36,7 @@ import com.energysh.egame.po.appstore.TDownCompleteLog;
 import com.energysh.egame.po.appstore.TGameUpdatePush;
 import com.energysh.egame.po.appstore.TInstallCompleteLog;
 import com.energysh.egame.po.appstore.TSearchLog;
+import com.energysh.egame.po.appstore.TUserAppInfo;
 import com.energysh.egame.util.Constants;
 import com.energysh.egame.util.EnvConfigurer;
 import com.energysh.egame.util.MarketUtils;
@@ -64,12 +65,41 @@ public class InterfaceServiceImp extends BaseService implements
 				.get("list");
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		List<Map<String, Object>> rList = new ArrayList<Map<String, Object>>();
-
 		StringBuilder updateDes = new StringBuilder("");
+		List<String> newList=new ArrayList<String>();
+		List<String> oldList=new ArrayList<String>();
+		List<Map<String, Object>> l= this.getAppstoreDao().findListMapBySql(" SELECT * FROM t_user_appInfo WHERE mac="+mac,null);
+		for(Map<String, Object> map:l){
+			oldList.add(map.get("packageName").toString());
+		}
 		for (Map<String, Object> map : packageList) {
 			String packageInfo = String.valueOf(map.get("package"));
 			Map<String, InstalledApp> appListMap = deviceMacInfoService
 					.getAppByPackag(packageInfo);
+			if (map.get("embeded").equals(1)) {
+				Map<String, TUserAppInfo> recordeApp = deviceMacInfoService
+						.getAppFromUserInfo(packageInfo, mac);
+				TUserAppInfo userInfo = new TUserAppInfo();
+				userInfo.setMac(para.get("mac"));
+				userInfo.setTime(new Date());
+				userInfo.setAppVersion(String.valueOf(map.get("version")));
+				userInfo.setPackageName(String.valueOf(map.get("package")));
+				if (appListMap.get(packageInfo) != null) {
+					userInfo.setAppName(appListMap.get(packageInfo).getName());
+				}
+
+				if (recordeApp.get(packageInfo) != null) {
+					String version = recordeApp.get(packageInfo)
+							.getAppVersion();
+					if (!(map.get("version").equals(version))) {
+						this.getAppstoreDao().save(userInfo);
+					}
+					newList.add(packageInfo.toString());
+				} else {
+					this.getAppstoreDao().save(userInfo);
+				}
+
+			}
 
 			if (appListMap.containsKey(packageInfo)) {
 				InstalledApp app = appListMap.get(packageInfo);
@@ -117,6 +147,13 @@ public class InterfaceServiceImp extends BaseService implements
 				rMap.put("infomation", info);
 
 				rList.add(rMap);
+			}
+		}
+		oldList.removeAll(newList);
+		if(oldList.size()>0){
+			for(int i=0;i<oldList.size();i++){
+				this.getAppstoreDao().excuteBySql("DELETE FROM t_user_appInfo WHERE mac=? AND packageName=?",
+						new Object[]{mac,oldList.get(i).toString()});
 			}
 		}
 		if ("true".equals(para.get("pushType"))) {
@@ -511,6 +548,22 @@ public class InterfaceServiceImp extends BaseService implements
 		DecimalFormat df = new DecimalFormat("#.00");
 		Map<String, Boolean> countMap = new LinkedHashMap<String, Boolean>();
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> recordeApp = new ArrayList<Map<String, Object>>();
+		if ((para.get("type").equals("1") | para.get("type").equals("2"))
+				&& (para.get("mac") != null)) {
+			recordeApp = this.getAppstoreDao().findListMapBySql(
+					"SELECT * FROM t_user_appInfo WHERE mac = "
+							+ para.get("mac"), null);
+			for (int i = 0; i < recordeApp.size(); i++) {
+				Map<String, Object> map1 = recordeApp.get(i);
+				for (int j = 0; j < rlist.size(); j++) {
+					Map<String, Object> map2 = rlist.get(j);
+					if (map1.get("packageName").equals(map2.get("pakeage"))) {
+						rlist.remove(j);
+					}
+				}
+			}
+		}
 		for (int i = 0; i < rlist.size(); i++) {
 			Map<String, Object> map = rlist.get(i);
 			String subjId = map.get("subj_id").toString();
@@ -548,15 +601,19 @@ public class InterfaceServiceImp extends BaseService implements
 			Map<String, Object> infoMap = new LinkedHashMap<String, Object>();
 			infoMap.put("company", map.get("develope"));
 			infoMap.put("classify", map.get("cat2_name"));
-			infoMap.put("lastestUpdate",
-					mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
+			if (map.get("uptime") != null) {
+				infoMap.put("lastestUpdate", mu.formateDate(map.get("uptime")
+						.toString(), "yyyy-MM-dd"));
+				appMap.put("deployTime", mu.formateDate(map.get("uptime")
+						.toString(), "yyyy-MM-dd HH:mm:ss"));
+			}
+
 			infoMap.put("version", map.get("version"));
 			infoMap.put("size", df.format(map.get("app_size")));
 			infoMap.put("ageLimit", map.get("age_limit"));
 			infoMap.put("compaticity", map.get("os_version_min"));
 			appMap.put("infomation", infoMap);
-			appMap.put("deployTime", mu.formateDate(map.get("uptime")
-					.toString(), "yyyy-MM-dd HH:mm:ss"));
+
 			list.add(appMap);
 		}
 		subjectMap.put("list", list);
@@ -860,15 +917,18 @@ public class InterfaceServiceImp extends BaseService implements
 			Map<String, Object> infoMap = new LinkedHashMap<String, Object>();
 			infoMap.put("company", map.get("develope"));
 			infoMap.put("classify", map.get("cat2_name"));
-			infoMap.put("lastestUpdate",
-					mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
+			if (map.get("uptime") != null) {
+				infoMap.put("lastestUpdate", mu.formateDate(map.get("uptime")
+						.toString(), "yyyy-MM-dd"));
+				appMap.put("deployTime", mu.formateDate(map.get("uptime")
+						.toString(), "yyyy-MM-dd HH:mm:ss"));
+			}
 			infoMap.put("version", map.get("version"));
 			infoMap.put("size", df.format(map.get("app_size")));
 			infoMap.put("ageLimit", map.get("age_limit"));
 			infoMap.put("compaticity", map.get("os_version_min"));
 			appMap.put("infomation", infoMap);
-			appMap.put("deployTime", mu.formateDate(map.get("uptime")
-					.toString(), "yyyy-MM-dd HH:mm:ss"));
+
 			list.add(appMap);
 		}
 		subjectMap.put("list", list);
@@ -1929,15 +1989,18 @@ public class InterfaceServiceImp extends BaseService implements
 			Map<String, Object> infoMap = new LinkedHashMap<String, Object>();
 			infoMap.put("company", map.get("develope"));
 			infoMap.put("classify", map.get("cat2_name"));
-			infoMap.put("lastestUpdate",
-					mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
+			if (map.get("uptime") != null) {
+				infoMap.put("lastestUpdate", mu.formateDate(map.get("uptime")
+						.toString(), "yyyy-MM-dd"));
+				appMap.put("deployTime", mu.formateDate(map.get("uptime")
+						.toString(), "yyyy-MM-dd HH:mm:ss"));
+			}
+
 			infoMap.put("version", map.get("version"));
 			infoMap.put("size", df.format(map.get("app_size")));
 			infoMap.put("ageLimit", map.get("age_limit"));
 			infoMap.put("compaticity", map.get("os_version_min"));
 			appMap.put("infomation", infoMap);
-			appMap.put("deployTime", mu.formateDate(map.get("uptime")
-					.toString(), "yyyy-MM-dd HH:mm:ss"));
 			list.add(appMap);
 		}
 		subjectMap.put("list", list);
