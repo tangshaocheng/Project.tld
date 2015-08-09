@@ -68,8 +68,10 @@ function backAdd(data){
 			   	<tr class="odd2">
 			     	<th width="25%" class="ui-widget-header" style="height: 35px; font-size: 13px; margin: 0 auto; font: '黑体';">新密码<font color="red">*</font>：</th>
 			     	<td width="75%">
-			     		<input type="password" name="ps" style="width:300px"  maxlength="20" id="ps"  onKeyDown= "if(event.keyCode==32) return false ">
-			     	</td>
+			     		<input type="password" name="ps" style="width:300px"
+						maxlength="20" id="ps"
+						onKeyDown="if(event.keyCode==32) return false ">
+					</td>
 				</tr>
 				<tr class="even">
 			     	<th width="25%" class="ui-widget-header" style="height: 35px; font-size: 13px; margin: 0 auto; font: '黑体';">重复新密码<font color="red">*</font>：</th>

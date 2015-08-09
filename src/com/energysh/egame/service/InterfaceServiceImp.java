@@ -66,10 +66,12 @@ public class InterfaceServiceImp extends BaseService implements
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		List<Map<String, Object>> rList = new ArrayList<Map<String, Object>>();
 		StringBuilder updateDes = new StringBuilder("");
-		List<String> newList=new ArrayList<String>();
-		List<String> oldList=new ArrayList<String>();
-		List<Map<String, Object>> l= this.getAppstoreDao().findListMapBySql(" SELECT * FROM t_user_appInfo WHERE mac="+mac,null);
-		for(Map<String, Object> map:l){
+		List<String> newList = new ArrayList<String>();
+		List<String> oldList = new ArrayList<String>();
+		List<Map<String, Object>> l = this.getAppstoreDao().findListMapBySql(
+				" SELECT packageName FROM t_user_appInfo WHERE mac=" + mac,
+				null);
+		for (Map<String, Object> map : l) {
 			oldList.add(map.get("packageName").toString());
 		}
 		for (Map<String, Object> map : packageList) {
@@ -150,10 +152,12 @@ public class InterfaceServiceImp extends BaseService implements
 			}
 		}
 		oldList.removeAll(newList);
-		if(oldList.size()>0){
-			for(int i=0;i<oldList.size();i++){
-				this.getAppstoreDao().excuteBySql("DELETE FROM t_user_appInfo WHERE mac=? AND packageName=?",
-						new Object[]{mac,oldList.get(i).toString()});
+		if (oldList.size() > 0) {
+			for (int i = 0; i < oldList.size(); i++) {
+				this.getAppstoreDao()
+						.excuteBySql(
+								"DELETE FROM t_user_appInfo WHERE mac=? AND packageName=?",
+								new Object[] { mac, oldList.get(i).toString() });
 			}
 		}
 		if ("true".equals(para.get("pushType"))) {
@@ -552,7 +556,7 @@ public class InterfaceServiceImp extends BaseService implements
 		if ((para.get("type").equals("1") | para.get("type").equals("2"))
 				&& (para.get("mac") != null)) {
 			recordeApp = this.getAppstoreDao().findListMapBySql(
-					"SELECT * FROM t_user_appInfo WHERE mac = "
+					"SELECT packageName FROM t_user_appInfo WHERE mac = "
 							+ para.get("mac"), null);
 			for (int i = 0; i < recordeApp.size(); i++) {
 				Map<String, Object> map1 = recordeApp.get(i);
