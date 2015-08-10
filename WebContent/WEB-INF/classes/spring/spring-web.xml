@@ -22,7 +22,7 @@
 	<mvc:resources mapping="/file/**" location="/file/" />
 	<mvc:default-servlet-handler />
 
-	<!--***************************公用部分开始***************************-->
+	<!--***************************公用部分开始*************************** -->
 
 	<bean name="/main.htm" class="com.energysh.egame.web.RedirectControl"
 		parent="baseController">
@@ -55,13 +55,13 @@
 
 	<bean name="/appStoreApi" class="com.energysh.egame.web.rs.InterfaceController"
 		parent="baseController" autowire="byName" />
-		
+
 	<bean name="/testApi" class="com.energysh.egame.test.TestCtrl"
 		parent="baseController" autowire="byName" />
 
-	<!--***************************公用部分结束***************************-->
+	<!--***************************公用部分结束*************************** -->
 
-	<!--***************************应用管理开始***************************-->
+	<!--***************************应用管理开始*************************** -->
 
 	<bean name="/app/toQuery_in.htm" class="com.energysh.egame.web.app.ToQuery"
 		parent="baseController">
@@ -100,9 +100,9 @@
 		<property name="jsp" value="/WEB-INF/jsp/app/choose_in.jsp" />
 	</bean>
 
-	<!--***************************应用管理结束***************************-->
+	<!--***************************应用管理结束*************************** -->
 
-	<!--***************************专题开始***************************-->
+	<!--***************************专题开始*************************** -->
 
 	<bean name="/apptheme/toQuery_in.htm" class="com.energysh.egame.web.apptheme.ToQuery"
 		parent="baseController">
@@ -139,9 +139,9 @@
 		<property name="jsp" value="/WEB-INF/jsp/apptheme/choose_in.jsp" />
 	</bean>
 
-	<!--***************************专题结束***************************-->
+	<!--***************************专题结束*************************** -->
 
-	<!--***************************专题包开始***************************-->
+	<!--***************************专题包开始*************************** -->
 
 	<bean name="/appthemebag/toQuery_in.htm" class="com.energysh.egame.web.appthemebag.ToQuery"
 		parent="baseController">
@@ -178,9 +178,9 @@
 		<property name="jsp" value="/WEB-INF/jsp/appthemebag/choose_in.jsp" />
 	</bean>
 
-	<!--***************************专题包结束***************************-->
+	<!--***************************专题包结束*************************** -->
 
-	<!--***************************专题包排版开始***************************-->
+	<!--***************************专题包排版开始*************************** -->
 
 	<bean name="/appthemebagsort/toQuery_in.htm" class="com.energysh.egame.web.appthemebagsort.ToQuery"
 		parent="baseController">
@@ -212,9 +212,9 @@
 	<bean name="/appthemebagsort/sort_in.htm" class="com.energysh.egame.web.appthemebagsort.Sort"
 		parent="baseController" autowire="byName" />
 
-	<!--***************************专题包排版结束***************************-->
-	
-	<!--***************************专题包排版三星开始***************************-->
+	<!--***************************专题包排版结束*************************** -->
+
+	<!--***************************专题包排版三星开始*************************** -->
 
 	<bean name="/appthemebagsortsx/toQuery_in.htm" class="com.energysh.egame.web.appthemebagsort.sx.ToQuery"
 		parent="baseController">
@@ -246,9 +246,9 @@
 	<bean name="/appthemebagsortsx/sort_in.htm" class="com.energysh.egame.web.appthemebagsort.sx.Sort"
 		parent="baseController" autowire="byName" />
 
-	<!--***************************专题包排版结束***************************-->
+	<!--***************************专题包排版结束*************************** -->
 
-	<!--***************************专题包排版开始***************************-->
+	<!--***************************专题包排版开始*************************** -->
 
 	<bean name="/appcategory/toQuery_in.htm" class="com.energysh.egame.web.appcategory.ToQuery"
 		parent="baseController" autowire="byName">
@@ -256,7 +256,8 @@
 	</bean>
 	<bean name="/appcategory/toUpCategoryGood_in.htm" class="com.energysh.egame.web.appcategory.ToUpCategoryGood"
 		parent="baseController" autowire="byName">
-		<property name="jsp" value="/WEB-INF/jsp/appcategory/up_category_good_in.jsp" />
+		<property name="jsp"
+			value="/WEB-INF/jsp/appcategory/up_category_good_in.jsp" />
 	</bean>
 	<bean name="/appcategory/upCategoryGood_in.htm" class="com.energysh.egame.web.appcategory.UpCategoryGood"
 		parent="baseController" autowire="byName" />
@@ -292,9 +293,9 @@
 	<bean name="/appcategory/getListByFatherId_in.htm" class="com.energysh.egame.web.appcategory.QuerySub"
 		parent="baseController" autowire="byName" />
 
-	<!--***************************专题包排版结束***************************-->
+	<!--***************************专题包排版结束*************************** -->
 
-	<!--***************************登陆开始***************************-->
+	<!--***************************登陆开始*************************** -->
 
 	<bean name="/tologin_out.htm" class="com.energysh.egame.web.login.ToLogin"
 		parent="baseController" autowire="byName">
@@ -335,9 +336,9 @@
 	<bean name="/menutree_out.htm" class="com.energysh.egame.web.login.MenuTree"
 		parent="baseController" autowire="byName" />
 
-	<!--***************************登陆结束***************************-->
+	<!--***************************登陆结束*************************** -->
 
-	<!--***************************外部-用户修改密码开始***************************-->
+	<!--***************************外部-用户修改密码开始*************************** -->
 
 	<bean name="/user/toUpLps_out.htm" class="com.energysh.egame.web.RedirectControl"
 		parent="baseController" autowire="byName">
@@ -347,9 +348,9 @@
 	<bean name="/user/upLps_out.htm" class="com.energysh.egame.web.login.UpLps"
 		parent="baseController" autowire="byName" />
 
-	<!--***************************外部-用户修改密码结束***************************-->
+	<!--***************************外部-用户修改密码结束*************************** -->
 
-	<!--***************************应用数据统计开始***************************-->
+	<!--***************************应用数据统计开始*************************** -->
 
 	<bean name="/appstatistics/toQuery_in.htm" class="com.energysh.egame.web.RedirectControl"
 		parent="baseController" autowire="byName">
@@ -367,9 +368,9 @@
 	<bean name="/appstatistics/query_out.htm" class="com.energysh.egame.web.appstatistics.Query"
 		parent="baseController" autowire="byName" />
 
-	<!--***************************应用数据统计结束***************************-->
+	<!--***************************应用数据统计结束*************************** -->
 
-	<!--***************************销售设置开始***************************-->
+	<!--***************************销售设置开始*************************** -->
 
 	<bean name="/sales/toQuery_in.htm" class="com.energysh.egame.web.sales.ToQuery"
 		parent="baseController">
@@ -390,9 +391,9 @@
 	<bean name="/sales/del_in.htm" class="com.energysh.egame.web.sales.Del"
 		parent="baseController" autowire="byName" />
 
-	<!--***************************销售设置结束***************************-->
+	<!--***************************销售设置结束*************************** -->
 
-	<!--***************************创建账号开始***************************-->
+	<!--***************************创建账号开始*************************** -->
 
 	<bean name="/account/toQuery_in.htm" class="com.energysh.egame.web.account.ToQuery"
 		parent="baseController">
@@ -421,9 +422,9 @@
 	<bean name="/account/getName_in.htm" class="com.energysh.egame.web.account.GetList"
 		parent="baseController" autowire="byName" />
 
-	<!--***************************创建账号结束***************************-->
+	<!--***************************创建账号结束*************************** -->
 
-	<!--***************************设置昨日收益开始***************************-->
+	<!--***************************设置昨日收益开始*************************** -->
 
 	<bean name="/yesincome/toQuery_in.htm" class="com.energysh.egame.web.yesincome.ToQuery"
 		parent="baseController">
@@ -444,9 +445,9 @@
 	<bean name="/yesincome/query_out.htm" class="com.energysh.egame.web.yesincome.Query"
 		parent="baseController" autowire="byName" />
 
-	<!--***************************设置昨日收益结束***************************-->
+	<!--***************************设置昨日收益结束*************************** -->
 
-	<!--***************************生成批次号开始***************************-->
+	<!--***************************生成批次号开始*************************** -->
 
 	<bean name="/genbatch/toQuery_in.htm" class="com.energysh.egame.web.genbatch.ToQuery"
 		parent="baseController">
@@ -464,15 +465,15 @@
 	<bean name="/genbatch/add_in.htm" class="com.energysh.egame.web.genbatch.Add"
 		parent="baseController" autowire="byName" />
 
-	<!--***************************生成批次号结束***************************-->
+	<!--***************************生成批次号结束*************************** -->
 
-	<!--***************************合作商收益设置开始***************************-->
+	<!--***************************合作商收益设置开始*************************** -->
 
 	<bean name="/partnersincomeconf/toQuery_in.htm" class="com.energysh.egame.web.partnersincomeconf.ToQuery"
 		parent="baseController">
 		<property name="jsp" value="/WEB-INF/jsp/partnersincomeconf/query_in.jsp" />
 	</bean>
-	
+
 	<bean name="/partnersincomeconf/query_in.htm" class="com.energysh.egame.web.partnersincomeconf.Query"
 		parent="baseController" autowire="byName" />
 
@@ -484,9 +485,9 @@
 	<bean name="/partnersincomeconf/up_in.htm" class="com.energysh.egame.web.partnersincomeconf.Up"
 		parent="baseController" autowire="byName" />
 
-	<!--***************************合作商收益设置结束***************************-->
+	<!--***************************合作商收益设置结束*************************** -->
 
-	<!--***************************设置CPS收益开始***************************-->
+	<!--***************************设置CPS收益开始*************************** -->
 
 	<bean name="/cpsincome/toQuery_in.htm" class="com.energysh.egame.web.cpsincome.ToQuery"
 		parent="baseController" autowire="byName">
@@ -499,9 +500,9 @@
 	<bean name="/cpsincome/add_in.htm" class="com.energysh.egame.web.cpsincome.Add"
 		parent="baseController" autowire="byName" />
 
-	<!--***************************设置CPS收益结束***************************-->
+	<!--***************************设置CPS收益结束*************************** -->
 
-	<!--***************************发布收益开始***************************-->
+	<!--***************************发布收益开始*************************** -->
 
 	<bean name="/pubuserincome/toQuery_in.htm" class="com.energysh.egame.web.pubuserincome.ToQuery"
 		parent="baseController" autowire="byName">
@@ -514,6 +515,6 @@
 	<bean name="/pubuserincome/add_in.htm" class="com.energysh.egame.web.pubuserincome.Add"
 		parent="baseController" autowire="byName" />
 
-	<!--***************************发布收益结束***************************-->
+	<!--***************************发布收益结束*************************** -->
 
 </beans>
