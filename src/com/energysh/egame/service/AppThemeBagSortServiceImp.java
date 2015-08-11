@@ -10,7 +10,8 @@ import org.apache.commons.lang.StringUtils;
 import com.energysh.egame.po.appstore.TAppThemeBagSort;
 import com.energysh.egame.util.MyUtil;
 
-public class AppThemeBagSortServiceImp extends BaseService implements AppThemeBagSortService {
+public class AppThemeBagSortServiceImp extends BaseService implements
+		AppThemeBagSortService {
 
 	@Override
 	public Map<String, String> add(Map<String, String> para) throws Exception {
@@ -24,7 +25,9 @@ public class AppThemeBagSortServiceImp extends BaseService implements AppThemeBa
 		MyUtil mu = MyUtil.getInstance();
 		String id = para.get("id");
 		if (mu.isNotBlank(id)) {
-			this.getAppstoreDao().excute("DELETE TAppThemeBagSort WHERE id = ?", new Object[] { Integer.parseInt(id) });
+			this.getAppstoreDao().excute(
+					"DELETE TAppThemeBagSort WHERE id = ?",
+					new Object[] { Integer.parseInt(id) });
 			rmap.put("info", "ok");
 		} else {
 			rmap.put("info", "error");
@@ -43,7 +46,8 @@ public class AppThemeBagSortServiceImp extends BaseService implements AppThemeBa
 		// PageBar pb = new PageBar(para);
 		Map<String, Object> map = new HashMap<String, Object>();
 		MyUtil mu = MyUtil.getInstance();
-		StringBuilder sql = new StringBuilder("FROM t_app_theme_bag_sort t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id WHERE 1=1");
+		StringBuilder sql = new StringBuilder(
+				"FROM t_app_theme_bag_sort t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id WHERE 1=1");
 		List<Object> plist = new ArrayList<Object>();
 		if (mu.isNotBlank(para.get("themeBagid"))) {
 			sql.append(" AND t2.id = ?");
@@ -57,16 +61,21 @@ public class AppThemeBagSortServiceImp extends BaseService implements AppThemeBa
 			sql.append(" AND t2.bag_type = ?");
 			plist.add(Integer.valueOf(para.get("themeBagType")));
 		}
-		// pb.setTotalNum(this.getAppstoreDao().findIntBySql("SELECT COUNT(t1.id) " + sql, plist.toArray()));
+		// pb.setTotalNum(this.getAppstoreDao().findIntBySql("SELECT COUNT(t1.id) "
+		// + sql, plist.toArray()));
 		// if (pb.getTotalNum() == 0)
 		// return pb;
-		int size = this.getAppstoreDao().findIntBySql("SELECT COUNT(t1.id) " + sql, plist.toArray());
+		int size = this.getAppstoreDao().findIntBySql(
+				"SELECT COUNT(t1.id) " + sql, plist.toArray());
 		if (0 == size) {
 			return map;
 		}
-		sql.insert(0, "SELECT t1.*, CAST(t1.theme_bag_id AS SIGNED) theme_bag_id, CONCAT(t2.name) theme_bag_name, CAST(t2.bag_type AS SIGNED) theme_bag_type ");
+		sql.insert(
+				0,
+				"SELECT t1.*, CAST(t1.theme_bag_id AS SIGNED) theme_bag_id, CONCAT(t2.name) theme_bag_name, CAST(t2.bag_type AS SIGNED) theme_bag_type ");
 		sql.append(" ORDER BY t1.sort, t1.id");
-		List<Map<String, Object>> rList = this.getAppstoreDao().findListMapBySql(sql.toString(), plist.toArray());
+		List<Map<String, Object>> rList = this.getAppstoreDao()
+				.findListMapBySql(sql.toString(), plist.toArray());
 		// pb.setResultList(rList);
 		map.put("resultList", rList);
 		return map;
@@ -81,13 +90,18 @@ public class AppThemeBagSortServiceImp extends BaseService implements AppThemeBa
 		// String[] sorts = StringUtils.split(para.get("sort"), a);
 		for (int i = 0; i < themeBagIds.length; i++) {
 			int themeBagId = Integer.parseInt(themeBagIds[i]);
-			TAppThemeBagSort po = (TAppThemeBagSort) this.getAppstoreDao().findObject("FROM TAppThemeBagSort t1 WHERE t1.themeBagId = ? ", new Object[] { themeBagId });
+			TAppThemeBagSort po = (TAppThemeBagSort) this
+					.getAppstoreDao()
+					.findObject(
+							"FROM TAppThemeBagSort t1 WHERE t1.themeBagId = ? ",
+							new Object[] { themeBagId });
 			if (po == null) {
 				po = new TAppThemeBagSort();
 				po.setThemeBagId(themeBagId);
 			}
 			/*
-			 * if (mu.isBlank(sorts[i])) po.setSort(null); else po.setSort(Integer.valueOf((sorts[i])));
+			 * if (mu.isBlank(sorts[i])) po.setSort(null); else
+			 * po.setSort(Integer.valueOf((sorts[i])));
 			 */
 			po.setSort(i + 1);
 			this.getAppstoreDao().saveOrUpdate(po);

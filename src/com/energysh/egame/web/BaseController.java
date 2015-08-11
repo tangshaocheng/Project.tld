@@ -21,6 +21,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 
 import com.energysh.egame.service.AccountService;
 import com.energysh.egame.service.AppCategoryService;
+import com.energysh.egame.service.AppSdkService;
 import com.energysh.egame.service.AppService;
 import com.energysh.egame.service.AppStatisticsService;
 import com.energysh.egame.service.AppThemeBagService;
@@ -220,6 +221,7 @@ public abstract class BaseController extends AbstractController {
 	private LoginService loginService;
 	private AppThemeService appThemeService;
 	private AppThemeBagService appThemeBagService;
+	private AppSdkService appSdkService;
 	private AppCategoryService appCategoryService;
 	private AppThemeBagSortService appThemeBagSortService;
 	private AppThemeBagSortSxService appThemeBagSortSxService;
@@ -232,6 +234,14 @@ public abstract class BaseController extends AbstractController {
 	private PartnersIncomeConfService partnersIncomeConfService;
 	private CpsIncomeService cpsIncomeService;
 	private UserIncomeService userIncomeService;
+
+	public AppSdkService getAppSdkService() {
+		return appSdkService;
+	}
+
+	public void setAppSdkService(AppSdkService appSdkService) {
+		this.appSdkService = appSdkService;
+	}
 
 	public UserIncomeService getUserIncomeService() {
 		return userIncomeService;

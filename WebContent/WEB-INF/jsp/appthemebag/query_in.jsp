@@ -85,7 +85,7 @@ function backSort_(data){
     	<tr>
        		<td width="100%">
        			专题包名称：<input type="text" name="name" style="width:100px">&nbsp;&nbsp;
-       			专题包类型：<select name="bagType" style="width:100px"><option value="">全部</option><option value="1">有标题</option><option value="0">无标题</option></select>&nbsp;&nbsp;
+       			专题包类型：<select name="bagType" style="width:100px"><option value="">全部</option><option value="1">开启</option><option value="0">关闭</option></select>&nbsp;&nbsp;
 				<input type="button" value="查询" onclick="queryData()" class="btn">&nbsp;&nbsp;
 			    <input type="button" value="添加" onclick="add_()" class="btn">
    			</td>

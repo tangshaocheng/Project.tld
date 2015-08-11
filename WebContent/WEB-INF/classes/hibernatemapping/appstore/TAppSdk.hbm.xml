@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.energysh.egame.po.appstore.TAppSdk" table="t_app_sdk">
+		<id name="id" type="java.lang.Integer">
+			<column name="id" />
+			<generator class="identity" />
+		</id>
+		<property name="sdkName" type="java.lang.String">
+			<column name="sdk_name" length="256" />
+		</property>
+		<property name="country" type="java.lang.String">
+			<column name="country" length="50" />
+		</property>
+		<property name="activeTime" type="java.lang.String">
+			<column name="activeTime" length="50" />
+		</property>
+		<property name="OnOrOff" type="java.lang.String">
+			<column name="OnOrOff" length="50" />
+		</property>
+		<property name="createTime" type="timestamp">
+			<column name="createTime" />
+		</property>
+
+	</class>
+</hibernate-mapping>

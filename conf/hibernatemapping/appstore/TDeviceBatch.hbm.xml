@@ -17,5 +17,11 @@
 		<property name="ctime" type="timestamp">
 			<column name="ctime" />
 		</property>
+		<property name="sdkSwitch" type="java.lang.String">
+			<column name="sdk_switch" />
+		</property>
+		<property name="sdkId" type="java.lang.Integer">
+			<column name="sdk_id" />
+		</property>
 	</class>
 </hibernate-mapping>

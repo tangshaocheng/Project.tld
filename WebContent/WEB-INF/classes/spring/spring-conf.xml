@@ -242,6 +242,12 @@
 			<ref bean="appstoreDao" />
 		</property>
 	</bean>
+	
+	<bean id="appSdkService" class="com.energysh.egame.service.AppSdkServiceImp">
+		<property name="appstoreDao">
+			<ref bean="appstoreDao" />
+		</property>
+	</bean>
 
 	<bean id="appThemeBagService" class="com.energysh.egame.service.AppThemeBagServiceImp">
 		<property name="appstoreDao">

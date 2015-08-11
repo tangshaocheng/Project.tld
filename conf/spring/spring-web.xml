@@ -177,7 +177,40 @@
 		parent="baseController">
 		<property name="jsp" value="/WEB-INF/jsp/appthemebag/choose_in.jsp" />
 	</bean>
+	<!--sdk开关 -->
+	<bean name="/appsdk/toQuery_in.htm" class="com.energysh.egame.web.appsdk.ToQuery"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/appsdk/query_in.jsp" />
+	</bean>
+	<bean name="/appsdk/toAdd_in.htm" class="com.energysh.egame.web.appsdk.ToAdd"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/appsdk/add_in.jsp" />
+	</bean>
 
+	<bean name="/appsdk/toUp_in.htm" class="com.energysh.egame.web.appsdk.ToUp"
+		parent="baseController" autowire="byName">
+		<property name="jsp" value="/WEB-INF/jsp/appsdk/up_in.jsp" />
+	</bean>
+
+	<bean name="/appsdk/query_in.htm" class="com.energysh.egame.web.appsdk.Query"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appsdk/add_in.htm" class="com.energysh.egame.web.appsdk.Add"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appsdk/up_in.htm" class="com.energysh.egame.web.appsdk.Up"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appsdk/del_in.htm" class="com.energysh.egame.web.appsdk.Del"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appsdk/sort_in.htm" class="com.energysh.egame.web.appsdk.Sort"
+		parent="baseController" autowire="byName" />
+
+	<bean name="/appsdk/choose_in.htm" class="com.energysh.egame.web.appsdk.Choose"
+		parent="baseController">
+		<property name="jsp" value="/WEB-INF/jsp/appsdk/choose_in.jsp" />
+	</bean>
 	<!--***************************专题包结束*************************** -->
 
 	<!--***************************专题包排版开始*************************** -->

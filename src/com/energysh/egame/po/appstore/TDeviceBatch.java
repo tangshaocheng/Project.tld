@@ -13,6 +13,23 @@ public class TDeviceBatch implements Serializable {
 	private String name;
 	private String remark;
 	private Date ctime;
+	private String sdkSwitch;
+	private Integer sdkId;
+	public Integer getSdkId() {
+		return sdkId;
+	}
+
+	public void setSdkId(Integer sdkId) {
+		this.sdkId = sdkId;
+	}
+
+	public String getSdkSwitch() {
+		return sdkSwitch;
+	}
+
+	public void setSdkSwitch(String sdkSwitch) {
+		this.sdkSwitch = sdkSwitch;
+	}
 
 	public String getBatchId() {
 		return batchId;
