@@ -13,9 +13,13 @@ public class Add extends BaseController {
 
 	public ModelAndView excute() {
 		try {
-			Map<String, String> rmap = this.getAppThemeService().add(UploadHepler.saveFileAndGetPara(this.getRequest(), Constants.FUN_THEME));
+			Map<String, String> rmap = this.getAppThemeService().add(
+					UploadHepler.saveFileAndGetPara(this.getRequest(),
+							Constants.FUN_THEME));
 			PrintWriter printWriter = this.getResponse().getWriter();
-			printWriter.print("<script type='text/javascript'>parent.backAdd_('" + rmap.get("info") + "');</script>");
+			printWriter
+					.print("<script type='text/javascript'>parent.backAdd_('"
+							+ rmap.get("info") + "');</script>");
 			printWriter.close();
 		} catch (Exception e) {
 			return this.errorAjax(e);

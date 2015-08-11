@@ -8,7 +8,8 @@ public class Add extends BaseController {
 
 	public ModelAndView excute() {
 		try {
-			return this.setJsonResult(this.getAppThemeBagService().add(this.getAjaxPara()));
+			return this.setJsonResult(this.getAppThemeBagService().add(
+					this.getAjaxPara()));
 		} catch (Exception e) {
 			return this.errorAjax(e);
 		}
