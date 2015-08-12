@@ -26,13 +26,21 @@
 			if (result[i]['OnOrOff'] == '1'){
 				bagType = '开启';
 			}
+			var country='';
 			if (result[i]['OnOrOff'] =='0'){
 				bagType = '关闭';
 			}
+			if (result[i]['country'] == '1'){
+				country = '中国';
+			}
+			if (result[i]['country'] =='0'){
+				country = '外国';
+			}
 			html += '<td>' + result[i]['id'] + '</td>';
 			html += '<td>' + result[i]['sdk_name'] + '</td>';
-			html += '<td>' + result[i]['country'] + '</td>';
+			html += '<td>' + country + '</td>';
 			html += '<td>' + bagType + '</td>';
+			html += '<td>' + result[i]['activeTime'] + '</td>';
 			html += '<td>'
 					+ formateDate(result[i]['createTime']['time'],
 							'YYYY-MM-DD HH:mm:ss') + '</td>';
@@ -115,10 +123,11 @@
 				<tbody>
 					<tr>
 						<th width="5%">SDKID</th>
-						<th width="10%">SDK名称</th>
+						<th width="8%">SDK名称</th>
 						<th width="5%">国家</th>
 						<th width="5%">开关</th>
-						<th width="8%">激活时间</th>
+						<th width="5%">激活时间</th>
+						<th width="8%">创建时间</th>
 						<th width="5%">操作</th>
 					</tr>
 				</tbody>

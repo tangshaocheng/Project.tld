@@ -17,7 +17,7 @@
 		<property name="activeTime" type="java.lang.String">
 			<column name="activeTime" length="50" />
 		</property>
-		<property name="OnOrOff" type="java.lang.String">
+		<property name="onOrOff" type="java.lang.String">
 			<column name="OnOrOff" length="50" />
 		</property>
 		<property name="createTime" type="timestamp">

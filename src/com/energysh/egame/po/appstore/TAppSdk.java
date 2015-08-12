@@ -2,6 +2,8 @@ package com.energysh.egame.po.appstore;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class TAppSdk implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -9,8 +11,9 @@ public class TAppSdk implements Serializable {
 	private String sdkName;
 	private String country;
 	private String activeTime;
-	private String OnOrOff;
+	private String onOrOff;
 	private Date createTime;
+	private List<Map<String, Object>> list;
 	public Integer getId() {
 		return id;
 	}
@@ -36,10 +39,10 @@ public class TAppSdk implements Serializable {
 		this.activeTime = activeTime;
 	}
 	public String getOnOrOff() {
-		return OnOrOff;
+		return onOrOff;
 	}
 	public void setOnOrOff(String onOrOff) {
-		OnOrOff = onOrOff;
+		this.onOrOff = onOrOff;
 	}
 	public Date getCreateTime() {
 		return createTime;
@@ -47,4 +50,22 @@ public class TAppSdk implements Serializable {
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
 	}
+	public List<Map<String, Object>> getList() {
+		return list;
+	}
+	public void setList(List<Map<String, Object>> list) {
+		this.list = list;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	@Override
+	public String toString() {
+		return "TAppSdk [id=" + id + ", sdkName=" + sdkName + ", country="
+				+ country + ", activeTime=" + activeTime + ", onOrOff="
+				+ onOrOff + ", createTime=" + createTime + ", list=" + list
+				+ "]";
+	}
+	
+	
 }

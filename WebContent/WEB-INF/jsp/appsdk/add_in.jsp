@@ -13,20 +13,13 @@ function add_(){
 		$('#name').focus();
 		return;
 	}
-	if($('input[name="subId"]').length==0){
-		alert('批次列表不能为空');
-		return;
-	}
-	var flag = sort_();
-	if(flag==1) {
-		alert('序列号不能为空');
-		return;
-	}else if(flag==2){
-		alert('序列号不能重复');
+	if($('#activeTime').val()==''){
+		alert('激活时间不能为空');
+		$('#activeTime').focus();
 		return;
 	}
 
-	ajaxPost('${pageContext.request.contextPath}/appsdk/add_in.htm',backAdd_);
+	ajaxPost('${pageContext.request.contextPath}/appsdk/add_in',backAdd_);
 }
 function backAdd_(data){
 	if(data[0]['info']=='ok'){
@@ -65,7 +58,7 @@ function chooseBatch(){
 		var operation="[<a href='javascript:del_("+indexApp+")'>删除</a>]";
 		html+="<tr class='even' id='tr_td_"+indexApp+"'>";
 			html+='<td>'+name[i]+'</td>';
-			html+='<td>'+batchId[i]+"<input type='hidden' name='subId' alt='themeId' value='"+batchId[i]+"'></td>";
+			html+='<td>'+batchId[i]+"<input type='' name='batchId' alt='themeId' value='"+batchId[i]+"'></td>";
 			html+='<td>'+remark[i]+'</td>';
 			html+='<td>'+operation+'</td>';
 			html+='</tr>';
@@ -116,7 +109,7 @@ function sort_(){
 	     		</td>
 			</tr>
 			<tr class="even">
-	     		<td width="25%">专题包类型：<font color="red">*</font></td>
+	     		<td width="25%">SDK类型：<font color="red">*</font></td>
 	     		<td width="75%">
 	     			<select name="bagType" id="bagType" style="width:300px">
 	     				<option value="1">开启</option>
@@ -125,26 +118,21 @@ function sort_(){
 	     		</td>
 			</tr>
 			<tr class="even">
-		     	<td width="100%" colspan="2">
-			     	<span style="width: 175px;">批次列表：<font color="red">*</font></span>
-			     	<input type="button" value="选择批次" class="btn" onclick="cBatch()">
-		     	</td>
+	     		<td width="25%">国家：<font color="red">*</font></td>
+	     		<td width="75%">
+	     			<select name="country" id="country" style="width:300px">
+	     				<option value="1">中国</option>
+	     				<option value="0">外国</option>
+	     			</select>
+	     		</td>
 			</tr>
-			<tr class="odd2">
-     			<td width="100%" colspan="2">
-     	    		<table id="listTable">
-     	    			<thead id="gridThead">  
-     	    			<tr id="tr_th_app">
-				   			<th width="20%">合作商</th>
-           					<th width="30%">批次号</th>
-           					<th width="30%">备注</th>
-				         </tr>
-				         </thead>
-				         <tbody id="gridtbody">
-	     	    		 </tbody>
-     	    		</table>
-     			</td>
-     		</tr>
+			<tr class="even">
+	     		<td width="25%">激活时间：<font color="red">*</font></td>
+	     		<td width="75%">
+	     	    	<input type="text" name="activeTime" id="activeTime" style="width:300px"/>
+	     		</td>
+			</tr>
+			
 			<tr class="odd2">
 		        <td colspan="2" align="center">
 		        	<input type="button" value="确     定" onclick="add_()" class="btn"/>&nbsp;&nbsp;&nbsp;&nbsp;

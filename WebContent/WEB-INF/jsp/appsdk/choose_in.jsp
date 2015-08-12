@@ -89,7 +89,7 @@ function chooseMuti(){
 	<table>
      <tr>
        <td width="100%">
-                          批次号：<input type="text" name="id" style="width:50px" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')">    
+                          批次号：<input type="text" name="batchId" style="width:150px" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')">    
 		     合作商：<input type="text" name="name" style="width:100px">   
 	      <input type="button" value="查询" onclick="queryData()" class="btn">&nbsp;
 	      <input type="button" value="确认所选" onclick="chooseMuti()" class="btn"> 
@@ -101,7 +101,7 @@ function chooseMuti(){
     <table width="100%" class="datatable">
       <tbody>
          <tr>
-           <th width="10%"><c:if test="${param.type ne 1}"><input type="checkbox" name="all" onclick="selectAll(this)">全选</c:if></th>
+           <th width="10%"></th>
            <th width="10%">合作商</th>
            <th width="20%">批次号</th>
            <th width="20%">备注</th>

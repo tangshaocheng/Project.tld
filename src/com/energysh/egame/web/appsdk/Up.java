@@ -8,7 +8,7 @@ public class Up extends BaseController {
 
 	public ModelAndView excute() {
 		try {
-			return this.setJsonResult(this.getAppThemeBagService().up(this.getAjaxPara()));
+			return this.setJsonResult(this.getAppSdkService().up(this.getAjaxPara()));
 		} catch (Exception e) {
 			return this.errorAjax(e);
 		}
