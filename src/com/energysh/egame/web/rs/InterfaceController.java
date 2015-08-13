@@ -1,6 +1,7 @@
 package com.energysh.egame.web.rs;
 
 import java.io.IOException;
+
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -128,6 +129,9 @@ public class InterfaceController extends BaseController {
 			} else if (method.equals(ReqFun.FUN_JM_SWITCH)) {
 				Map<String, Object> rmap = interfaceService.jmSwitch(para);
 				res = JSONObject.fromObject(rmap).toString();
+			} else if (method.equals(ReqFun.ADSDK_SWITCH)) {
+				Map<String, Object> map = interfaceService.checkADSDk(para);
+				res = JSONObject.fromObject(map).toString();
 			} else {
 				LOGGER.info(loggerStr);
 				throw new AppBizException(AppExcCodes.E_INVALID_REQUEST,

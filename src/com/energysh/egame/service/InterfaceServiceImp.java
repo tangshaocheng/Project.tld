@@ -3,7 +3,9 @@ package com.energysh.egame.service;
 import java.io.IOException;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -2197,5 +2199,43 @@ public class InterfaceServiceImp extends BaseService implements
 		Map<String, Object> rmap = new LinkedHashMap<String, Object>();
 		rmap.put("switch", Integer.valueOf(EnvConfigurer.getEvn("jmSwitch")));
 		return rmap;
+	}
+
+	@Override
+	public Map<String, Object> checkADSDk(Map<String, String> para)
+			throws Exception {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		Map<String, Object> map1 = new LinkedHashMap<String, Object>();
+		map.put("result", 1);
+		String batchId = para.get("batchId");
+		Map<String, Object> batchInfo = this.getAppstoreDao().findMapBySql(
+				"SELECT * from t_device_batch WHERE batch_id=?",
+				new Object[] { batchId });
+		Map<String, Object> sdkInfo = this.getAppstoreDao().findMapBySql(
+				"SELECT * from t_app_sdk WHERE id=?",
+				new Object[] { batchInfo.get("sdk_id") });
+		if (batchInfo.get("sdk_switch").equals("1")) {
+			Map<String, Object> macInfo = this
+					.getAppstoreDao()
+					.findMapBySql(
+							"SELECT * from t_device_mac_info WHERE mac=? AND batch_id=?",
+							new Object[] { para.get("mac"), batchId });
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(sdf.parse(macInfo.get("ctime").toString()));
+			long time1 = cal.getTimeInMillis();
+			cal.setTime(sdf.parse(sdf.format(new Date())));
+			long time2 = cal.getTimeInMillis();
+			Integer val = Integer.parseInt(String.valueOf((time2 - time1)
+					/ (1000 * 3600 * 24)));
+			if (val >= Integer.parseInt(String.valueOf(sdkInfo
+					.get("activeTime").toString()))) {
+				map1.put("Switch", 1);
+			} else {
+				map1.put("Switch", 0);
+			}
+		}
+		map.put("data", map1);
+		return map;
 	}
 }
