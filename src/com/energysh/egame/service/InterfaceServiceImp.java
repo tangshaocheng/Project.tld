@@ -68,14 +68,6 @@ public class InterfaceServiceImp extends BaseService implements
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		List<Map<String, Object>> rList = new ArrayList<Map<String, Object>>();
 		StringBuilder updateDes = new StringBuilder("");
-		List<String> newList = new ArrayList<String>();
-		List<String> oldList = new ArrayList<String>();
-		List<Map<String, Object>> l = this.getAppstoreDao().findListMapBySql(
-				" SELECT packageName FROM t_user_appInfo WHERE mac=" + mac,
-				null);
-		for (Map<String, Object> map : l) {
-			oldList.add(map.get("packageName").toString());
-		}
 		for (Map<String, Object> map : packageList) {
 			String packageInfo = String.valueOf(map.get("package"));
 			Map<String, InstalledApp> appListMap = deviceMacInfoService
@@ -98,7 +90,6 @@ public class InterfaceServiceImp extends BaseService implements
 					if (!(map.get("version").equals(version))) {
 						this.getAppstoreDao().save(userInfo);
 					}
-					newList.add(packageInfo.toString());
 				} else {
 					this.getAppstoreDao().save(userInfo);
 				}
@@ -132,14 +123,14 @@ public class InterfaceServiceImp extends BaseService implements
 				rMap.put("newFuture", app.getNewFuture());
 				rMap.put("support", app.getSupport());
 				rMap.put("ret", app.getRet());
-				rMap.put("icon", app.getIcon());
+				rMap.put("icon", ParaUtils.checkPicUri(app.getIcon()));
 				rMap.put("shareContent", app.getShareContent());
 				rMap.put("heat", "4");
-				rMap.put("pic1", app.getPic1());
-				rMap.put("pic2", app.getPic2());
-				rMap.put("pic3", app.getPic3());
-				rMap.put("pic4", app.getPic4());
-				rMap.put("pic5", app.getPic5());
+				rMap.put("pic1", ParaUtils.checkPicUri(app.getPic1()));
+				rMap.put("pic2", ParaUtils.checkPicUri(app.getPic2()));
+				rMap.put("pic3", ParaUtils.checkPicUri(app.getPic3()));
+				rMap.put("pic4", ParaUtils.checkPicUri(app.getPic4()));
+				rMap.put("pic5", ParaUtils.checkPicUri(app.getPic5()));
 				Map<String, Object> info = new HashMap<String, Object>();
 				info.put("company", app.getCompany());
 				info.put("classify", app.getClassify());
@@ -151,15 +142,6 @@ public class InterfaceServiceImp extends BaseService implements
 				rMap.put("infomation", info);
 
 				rList.add(rMap);
-			}
-		}
-		oldList.removeAll(newList);
-		if (oldList.size() > 0) {
-			for (int i = 0; i < oldList.size(); i++) {
-				this.getAppstoreDao()
-						.excuteBySql(
-								"DELETE FROM t_user_appInfo WHERE mac=? AND packageName=?",
-								new Object[] { mac, oldList.get(i).toString() });
 			}
 		}
 		if ("true".equals(para.get("pushType"))) {
@@ -569,6 +551,10 @@ public class InterfaceServiceImp extends BaseService implements
 					}
 				}
 			}
+		}
+		if (rlist.size() < 4) {
+			rlist = this.getAppstoreDao().findListMapBySql(sql.toString(),
+					plist.toArray());
 		}
 		for (int i = 0; i < rlist.size(); i++) {
 			Map<String, Object> map = rlist.get(i);

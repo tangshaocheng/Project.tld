@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-module
   type="WEB"
-  name="AppStore"
+  name="AppStore_cn"
   id="myeclipse.1370754196953"
   context-root="/AppStore"
   j2ee-spec="5.0"
-  archive="AppStore.war">
+  archive="AppStore_cn.war">
   <attributes>
     <attribute name="webrootdir" value="WebContent" />
   </attributes>
