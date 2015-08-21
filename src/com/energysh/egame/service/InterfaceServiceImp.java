@@ -538,7 +538,7 @@ public class InterfaceServiceImp extends BaseService implements
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> recordeApp = new ArrayList<Map<String, Object>>();
 		if ((para.get("type").equals("1") | para.get("type").equals("2"))
-				&& (para.get("mac") != null)) {
+				&& (para.get("mac") != null && para.get("mac") != "")) {
 			recordeApp = this.getAppstoreDao().findListMapBySql(
 					"SELECT packageName FROM t_user_appInfo WHERE mac = "
 							+ para.get("mac"), null);

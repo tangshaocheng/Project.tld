@@ -496,8 +496,8 @@ function delBatch(i){
 					<tr class="even">
 						<td colspan="2" align="center"><input type="button"
 							value="确     定" onclick="update()" class="btn" />&nbsp;&nbsp;&nbsp;&nbsp;
-							<input type="button" value="关     闭"onclick="javascript:parent.closeMyPop();" class="btn" />
-							</td>
+							<input type="button" value="关     闭"
+							onclick="javascript:parent.closeMyPop();" class="btn" /></td>
 					</tr>
 				</table>
 			</form>
