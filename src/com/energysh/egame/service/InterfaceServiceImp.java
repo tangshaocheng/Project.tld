@@ -540,8 +540,8 @@ public class InterfaceServiceImp extends BaseService implements
 		if ((para.get("type").equals("1") | para.get("type").equals("2"))
 				&& (para.get("mac") != null && para.get("mac") != "")) {
 			recordeApp = this.getAppstoreDao().findListMapBySql(
-					"SELECT packageName FROM t_user_appInfo WHERE mac = "
-							+ para.get("mac"), null);
+					"SELECT packageName FROM t_user_appInfo WHERE mac = ?",
+					new Object[] { para.get("mac") });
 			for (int i = 0; i < recordeApp.size(); i++) {
 				Map<String, Object> map1 = recordeApp.get(i);
 				for (int j = 0; j < rlist.size(); j++) {
@@ -2194,6 +2194,7 @@ public class InterfaceServiceImp extends BaseService implements
 		Map<String, Object> map1 = new LinkedHashMap<String, Object>();
 		map.put("result", 1);
 		String batchId = para.get("batchId");
+		String mac = para.get("mac");
 		Map<String, Object> batchInfo = this.getAppstoreDao().findMapBySql(
 				"SELECT * from t_device_batch WHERE batch_id=?",
 				new Object[] { batchId });
@@ -2205,7 +2206,7 @@ public class InterfaceServiceImp extends BaseService implements
 					.getAppstoreDao()
 					.findMapBySql(
 							"SELECT * from t_device_mac_info WHERE mac=? AND batch_id=?",
-							new Object[] { para.get("mac"), batchId });
+							new Object[] { mac, batchId });
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(sdf.parse(macInfo.get("ctime").toString()));
