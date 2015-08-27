@@ -152,7 +152,16 @@ public class InterfaceServiceImp extends BaseService implements
 				rList.add(rMap);
 			}
 		}
-		
+		oldList.removeAll(newList);
+		if (oldList.size() > 0) {
+			for (int i = 0; i < oldList.size(); i++) {
+				this.getAppstoreDao()
+						.excuteBySql(
+								"DELETE FROM t_user_appInfo WHERE mac=? AND packageName=?",
+								new Object[] { mac, oldList.get(i).toString() });
+			}
+		}
+
 		if ("true".equals(para.get("pushType"))) {
 			// 如果用户本地应用版本号和服务器版本号不一样，则下发应用需要更新PUSH通知，每天只通知一次。
 			if (StringUtils.isNotBlank(mac)
