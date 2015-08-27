@@ -68,13 +68,15 @@ public class InterfaceServiceImp extends BaseService implements
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		List<Map<String, Object>> rList = new ArrayList<Map<String, Object>>();
 		StringBuilder updateDes = new StringBuilder("");
+		List<String> newList = new ArrayList<String>();
 		for (Map<String, Object> map : packageList) {
 			String packageInfo = String.valueOf(map.get("package"));
 			Map<String, InstalledApp> appListMap = deviceMacInfoService
 					.getAppByPackag(packageInfo);
-			if (map.get("embeded").equals(1)) {
+			if (map.get("embeded").equals(1) && mac != null && !mac.equals("")) {
 				Map<String, TUserAppInfo> recordeApp = deviceMacInfoService
 						.getAppFromUserInfo(packageInfo, mac);
+				newList.add(packageInfo);
 				TUserAppInfo userInfo = new TUserAppInfo();
 				userInfo.setMac(para.get("mac"));
 				userInfo.setTime(new Date());
@@ -83,7 +85,6 @@ public class InterfaceServiceImp extends BaseService implements
 				if (appListMap.get(packageInfo) != null) {
 					userInfo.setAppName(appListMap.get(packageInfo).getName());
 				}
-
 				if (recordeApp.get(packageInfo) != null) {
 					String version = recordeApp.get(packageInfo)
 							.getAppVersion();
@@ -95,7 +96,6 @@ public class InterfaceServiceImp extends BaseService implements
 				}
 
 			}
-
 			if (appListMap.containsKey(packageInfo)) {
 				InstalledApp app = appListMap.get(packageInfo);
 				Map<String, Object> rMap = new HashMap<String, Object>();
@@ -144,6 +144,7 @@ public class InterfaceServiceImp extends BaseService implements
 				rList.add(rMap);
 			}
 		}
+		
 		if ("true".equals(para.get("pushType"))) {
 			// 如果用户本地应用版本号和服务器版本号不一样，则下发应用需要更新PUSH通知，每天只通知一次。
 			if (StringUtils.isNotBlank(mac)
