@@ -72,6 +72,7 @@ public class InterfaceServiceImp extends BaseService implements
 				" SELECT packageName FROM t_user_appInfo WHERE mac=" + mac,
 				null);
 		for (Map<String, Object> map : l) {
+			
 			oldList.add(map.get("packageName").toString());
 		}
 		for (Map<String, Object> map : packageList) {
