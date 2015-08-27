@@ -204,14 +204,10 @@
 	<bean name="/appsdk/del_in.htm" class="com.energysh.egame.web.appsdk.Del"
 		parent="baseController" autowire="byName" />
 
-	<bean name="/appsdk/sort_in.htm" class="com.energysh.egame.web.appsdk.Sort"
-		parent="baseController" autowire="byName" />
-
 	<bean name="/appsdk/choose_in.htm" class="com.energysh.egame.web.appsdk.Choose"
 		parent="baseController">
 		<property name="jsp" value="/WEB-INF/jsp/appsdk/choose_in.jsp" />
 	</bean>
-	<!--***************************专题包结束*************************** -->
 
 	<!--***************************专题包排版开始*************************** -->
 

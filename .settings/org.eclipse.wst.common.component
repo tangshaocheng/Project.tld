@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-modules id="moduleCoreId" project-version="1.5.0">
-    <wb-module deploy-name="AppStore">
+    <wb-module deploy-name="AppStore_cn">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/conf"/>
-        <property name="context-root" value="AppStore"/>
-        <property name="java-output-path" value="/AppStore/build/classes"/>
+        <property name="java-output-path" value="/AppStore_cn/build/classes"/>
+        <property name="context-root" value="AppStore_cn"/>
     </wb-module>
 </project-modules>

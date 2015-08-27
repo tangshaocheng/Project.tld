@@ -503,5 +503,7 @@ public interface ReqFun {
 	final String FUN_PRE_DOWN_APP_LIST = "preDownAppList";
 	
 	final String FUN_JM_SWITCH = "jmSwitch";
+	
+	final String ADSDK_SWITCH="ADsdkActivation";
 
 }

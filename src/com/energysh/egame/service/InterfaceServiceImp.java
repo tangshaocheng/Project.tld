@@ -3,7 +3,9 @@ package com.energysh.egame.service;
 import java.io.IOException;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -67,6 +69,7 @@ public class InterfaceServiceImp extends BaseService implements
 		List<Map<String, Object>> rList = new ArrayList<Map<String, Object>>();
 		StringBuilder updateDes = new StringBuilder("");
 		List<String> newList = new ArrayList<String>();
+<<<<<<< HEAD
 		List<String> oldList = new ArrayList<String>();
 		List<Map<String, Object>> l = this.getAppstoreDao().findListMapBySql(
 				" SELECT packageName FROM t_user_appInfo WHERE mac=" + mac,
@@ -75,13 +78,16 @@ public class InterfaceServiceImp extends BaseService implements
 			
 			oldList.add(map.get("packageName").toString());
 		}
+=======
+>>>>>>> origin/master
 		for (Map<String, Object> map : packageList) {
 			String packageInfo = String.valueOf(map.get("package"));
 			Map<String, InstalledApp> appListMap = deviceMacInfoService
 					.getAppByPackag(packageInfo);
-			if (map.get("embeded").equals(1)) {
+			if (map.get("embeded").equals(1) && mac != null && !mac.equals("")) {
 				Map<String, TUserAppInfo> recordeApp = deviceMacInfoService
 						.getAppFromUserInfo(packageInfo, mac);
+				newList.add(packageInfo);
 				TUserAppInfo userInfo = new TUserAppInfo();
 				userInfo.setMac(para.get("mac"));
 				userInfo.setTime(new Date());
@@ -90,20 +96,17 @@ public class InterfaceServiceImp extends BaseService implements
 				if (appListMap.get(packageInfo) != null) {
 					userInfo.setAppName(appListMap.get(packageInfo).getName());
 				}
-
 				if (recordeApp.get(packageInfo) != null) {
 					String version = recordeApp.get(packageInfo)
 							.getAppVersion();
 					if (!(map.get("version").equals(version))) {
 						this.getAppstoreDao().save(userInfo);
 					}
-					newList.add(packageInfo.toString());
 				} else {
 					this.getAppstoreDao().save(userInfo);
 				}
 
 			}
-
 			if (appListMap.containsKey(packageInfo)) {
 				InstalledApp app = appListMap.get(packageInfo);
 				Map<String, Object> rMap = new HashMap<String, Object>();
@@ -131,14 +134,14 @@ public class InterfaceServiceImp extends BaseService implements
 				rMap.put("newFuture", app.getNewFuture());
 				rMap.put("support", app.getSupport());
 				rMap.put("ret", app.getRet());
-				rMap.put("icon", app.getIcon());
+				rMap.put("icon", ParaUtils.checkPicUri(app.getIcon()));
 				rMap.put("shareContent", app.getShareContent());
 				rMap.put("heat", "4");
-				rMap.put("pic1", app.getPic1());
-				rMap.put("pic2", app.getPic2());
-				rMap.put("pic3", app.getPic3());
-				rMap.put("pic4", app.getPic4());
-				rMap.put("pic5", app.getPic5());
+				rMap.put("pic1", ParaUtils.checkPicUri(app.getPic1()));
+				rMap.put("pic2", ParaUtils.checkPicUri(app.getPic2()));
+				rMap.put("pic3", ParaUtils.checkPicUri(app.getPic3()));
+				rMap.put("pic4", ParaUtils.checkPicUri(app.getPic4()));
+				rMap.put("pic5", ParaUtils.checkPicUri(app.getPic5()));
 				Map<String, Object> info = new HashMap<String, Object>();
 				info.put("company", app.getCompany());
 				info.put("classify", app.getClassify());
@@ -152,15 +155,7 @@ public class InterfaceServiceImp extends BaseService implements
 				rList.add(rMap);
 			}
 		}
-		oldList.removeAll(newList);
-		if (oldList.size() > 0) {
-			for (int i = 0; i < oldList.size(); i++) {
-				this.getAppstoreDao()
-						.excuteBySql(
-								"DELETE FROM t_user_appInfo WHERE mac=? AND packageName=?",
-								new Object[] { mac, oldList.get(i).toString() });
-			}
-		}
+		
 		if ("true".equals(para.get("pushType"))) {
 			// 如果用户本地应用版本号和服务器版本号不一样，则下发应用需要更新PUSH通知，每天只通知一次。
 			if (StringUtils.isNotBlank(mac)
@@ -555,10 +550,10 @@ public class InterfaceServiceImp extends BaseService implements
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> recordeApp = new ArrayList<Map<String, Object>>();
 		if ((para.get("type").equals("1") | para.get("type").equals("2"))
-				&& (para.get("mac") != null)) {
+				&& (para.get("mac") != null && para.get("mac") != "")) {
 			recordeApp = this.getAppstoreDao().findListMapBySql(
-					"SELECT packageName FROM t_user_appInfo WHERE mac = "
-							+ para.get("mac"), null);
+					"SELECT packageName FROM t_user_appInfo WHERE mac = ?",
+					new Object[] { para.get("mac") });
 			for (int i = 0; i < recordeApp.size(); i++) {
 				Map<String, Object> map1 = recordeApp.get(i);
 				for (int j = 0; j < rlist.size(); j++) {
@@ -568,6 +563,10 @@ public class InterfaceServiceImp extends BaseService implements
 					}
 				}
 			}
+		}
+		if (rlist.size() < 4) {
+			rlist = this.getAppstoreDao().findListMapBySql(sql.toString(),
+					plist.toArray());
 		}
 		for (int i = 0; i < rlist.size(); i++) {
 			Map<String, Object> map = rlist.get(i);
@@ -2198,5 +2197,44 @@ public class InterfaceServiceImp extends BaseService implements
 		Map<String, Object> rmap = new LinkedHashMap<String, Object>();
 		rmap.put("switch", Integer.valueOf(EnvConfigurer.getEvn("jmSwitch")));
 		return rmap;
+	}
+
+	@Override
+	public Map<String, Object> checkADSDk(Map<String, String> para)
+			throws Exception {
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		Map<String, Object> map1 = new LinkedHashMap<String, Object>();
+		map.put("result", 1);
+		String batchId = para.get("batchId");
+		String mac = para.get("mac");
+		Map<String, Object> batchInfo = this.getAppstoreDao().findMapBySql(
+				"SELECT * from t_device_batch WHERE batch_id=?",
+				new Object[] { batchId });
+		Map<String, Object> sdkInfo = this.getAppstoreDao().findMapBySql(
+				"SELECT * from t_app_sdk WHERE id=?",
+				new Object[] { batchInfo.get("sdk_id") });
+		if (batchInfo.get("sdk_switch").equals("1")) {
+			Map<String, Object> macInfo = this
+					.getAppstoreDao()
+					.findMapBySql(
+							"SELECT * from t_device_mac_info WHERE mac=? AND batch_id=?",
+							new Object[] { mac, batchId });
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(sdf.parse(macInfo.get("ctime").toString()));
+			long time1 = cal.getTimeInMillis();
+			cal.setTime(sdf.parse(sdf.format(new Date())));
+			long time2 = cal.getTimeInMillis();
+			Integer val = Integer.parseInt(String.valueOf((time2 - time1)
+					/ (1000 * 3600 * 24)));
+			if (val >= Integer.parseInt(String.valueOf(sdkInfo
+					.get("activeTime").toString()))) {
+				map1.put("Switch", 1);
+			} else {
+				map1.put("Switch", 0);
+			}
+		}
+		map.put("data", map1);
+		return map;
 	}
 }
