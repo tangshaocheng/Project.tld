@@ -69,7 +69,6 @@ public class InterfaceServiceImp extends BaseService implements
 		List<Map<String, Object>> rList = new ArrayList<Map<String, Object>>();
 		StringBuilder updateDes = new StringBuilder("");
 		List<String> newList = new ArrayList<String>();
-<<<<<<< HEAD
 		List<String> oldList = new ArrayList<String>();
 		List<Map<String, Object>> l = this.getAppstoreDao().findListMapBySql(
 				" SELECT packageName FROM t_user_appInfo WHERE mac=" + mac,
@@ -78,8 +77,6 @@ public class InterfaceServiceImp extends BaseService implements
 			
 			oldList.add(map.get("packageName").toString());
 		}
-=======
->>>>>>> origin/master
 		for (Map<String, Object> map : packageList) {
 			String packageInfo = String.valueOf(map.get("package"));
 			Map<String, InstalledApp> appListMap = deviceMacInfoService
