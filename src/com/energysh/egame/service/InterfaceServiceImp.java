@@ -49,41 +49,33 @@ import com.energysh.egame.web.rs.InterfaceController;
 import com.energysh.egame.xg.XgUtil;
 
 @SuppressWarnings("unchecked")
-public class InterfaceServiceImp extends BaseService implements
-		InterfaceService {
+public class InterfaceServiceImp extends BaseService implements InterfaceService {
 
 	private ExecutorService executorService = Executors.newCachedThreadPool();
-	private static final Logger LOGGER = Logger
-			.getLogger(InterfaceController.class);
+	private static final Logger LOGGER = Logger.getLogger(InterfaceController.class);
 
 	public String appInstalledListSync(Map<String, String> para) {
 		String mac = para.get("mac");
 		if (StringUtils.isBlank(para.get("postContent"))) {
 			return MarketUtils.getErrorJson("post content is empty");
 		}
-		JSONObject postContentJSON = JSONObject.fromObject(para
-				.get("postContent"));
-		List<Map<String, Object>> packageList = (List<Map<String, Object>>) postContentJSON
-				.get("list");
+		JSONObject postContentJSON = JSONObject.fromObject(para.get("postContent"));
+		List<Map<String, Object>> packageList = (List<Map<String, Object>>) postContentJSON.get("list");
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		List<Map<String, Object>> rList = new ArrayList<Map<String, Object>>();
 		StringBuilder updateDes = new StringBuilder("");
 		List<String> newList = new ArrayList<String>();
 		List<String> oldList = new ArrayList<String>();
-		List<Map<String, Object>> l = this.getAppstoreDao().findListMapBySql(
-				" SELECT packageName FROM t_user_appInfo WHERE mac=" + mac,
-				null);
+		List<Map<String, Object>> l = this.getAppstoreDao()
+				.findListMapBySql(" SELECT packageName FROM t_user_appInfo WHERE mac=?", new Object[] { mac });
 		for (Map<String, Object> map : l) {
-			
 			oldList.add(map.get("packageName").toString());
 		}
 		for (Map<String, Object> map : packageList) {
 			String packageInfo = String.valueOf(map.get("package"));
-			Map<String, InstalledApp> appListMap = deviceMacInfoService
-					.getAppByPackag(packageInfo);
+			Map<String, InstalledApp> appListMap = deviceMacInfoService.getAppByPackag(packageInfo);
 			if (map.get("embeded").equals(1) && mac != null && !mac.equals("")) {
-				Map<String, TUserAppInfo> recordeApp = deviceMacInfoService
-						.getAppFromUserInfo(packageInfo, mac);
+				Map<String, TUserAppInfo> recordeApp = deviceMacInfoService.getAppFromUserInfo(packageInfo, mac);
 				newList.add(packageInfo);
 				TUserAppInfo userInfo = new TUserAppInfo();
 				userInfo.setMac(para.get("mac"));
@@ -94,8 +86,7 @@ public class InterfaceServiceImp extends BaseService implements
 					userInfo.setAppName(appListMap.get(packageInfo).getName());
 				}
 				if (recordeApp.get(packageInfo) != null) {
-					String version = recordeApp.get(packageInfo)
-							.getAppVersion();
+					String version = recordeApp.get(packageInfo).getAppVersion();
 					if (!(map.get("version").equals(version))) {
 						this.getAppstoreDao().save(userInfo);
 					}
@@ -104,6 +95,7 @@ public class InterfaceServiceImp extends BaseService implements
 				}
 
 			}
+
 			if (appListMap.containsKey(packageInfo)) {
 				InstalledApp app = appListMap.get(packageInfo);
 				Map<String, Object> rMap = new HashMap<String, Object>();
@@ -120,12 +112,9 @@ public class InterfaceServiceImp extends BaseService implements
 				rMap.put("versionCode", app.getVersionCode());
 				rMap.put("package", packageInfo);
 
-				rMap.put("app", ParaUtils.checkAppUri(
-						app.getApp(),
-						StringUtils.isEmpty(para.get("batchId")) ? "" : para
-								.get("batchId"), StringUtils.isEmpty(para
-								.get("mac")) ? "" : para.get("mac"), "", rMap
-								.get("id").toString()));
+				rMap.put("app", ParaUtils.checkAppUri(app.getApp(),
+						StringUtils.isEmpty(para.get("batchId")) ? "" : para.get("batchId"),
+						StringUtils.isEmpty(para.get("mac")) ? "" : para.get("mac"), "", rMap.get("id").toString()));
 				rMap.put("size", app.getSize());
 				rMap.put("summary", app.getSummary());
 				rMap.put("newFuture", app.getNewFuture());
@@ -155,28 +144,22 @@ public class InterfaceServiceImp extends BaseService implements
 		oldList.removeAll(newList);
 		if (oldList.size() > 0) {
 			for (int i = 0; i < oldList.size(); i++) {
-				this.getAppstoreDao()
-						.excuteBySql(
-								"DELETE FROM t_user_appInfo WHERE mac=? AND packageName=?",
-								new Object[] { mac, oldList.get(i).toString() });
+				this.getAppstoreDao().excuteBySql("DELETE FROM t_user_appInfo WHERE mac=? AND packageName=?",
+						new Object[] { mac, oldList.get(i).toString() });
 			}
 		}
-
 		if ("true".equals(para.get("pushType"))) {
 			// 如果用户本地应用版本号和服务器版本号不一样，则下发应用需要更新PUSH通知，每天只通知一次。
-			if (StringUtils.isNotBlank(mac)
-					&& StringUtils.isNotBlank(updateDes.toString())) {
+			if (StringUtils.isNotBlank(mac) && StringUtils.isNotBlank(updateDes.toString())) {
 				String title = "款应用有更新！";
 
-				updatePush(
-						(updateDes.toString().split(",").length - 1) + title,
+				updatePush((updateDes.toString().split(",").length - 1) + title,
 						updateDes.substring(1) + "有新版本了，请前往AppStore进行更新！", mac);
 			}
 		}
 		resultMap.put("list", rList);
 		resultMap.put("size", rList.size());
-		return MarketUtils.getResJson(JSONObject.fromObject(resultMap)
-				.toString());
+		return MarketUtils.getResJson(JSONObject.fromObject(resultMap).toString());
 	}
 
 	/**
@@ -194,8 +177,7 @@ public class InterfaceServiceImp extends BaseService implements
 		String secretKey = "64d8aabf59194e5992429fe15b563c69";
 		int appId = 1;// appId=1为appStore,为2为gameCenter
 
-		List<Object> tokenList = this.getAppstoreDao().findList(
-				"from MDevXgToken where mac=?", new Object[] { mac });
+		List<Object> tokenList = this.getAppstoreDao().findList("from MDevXgToken where mac=?", new Object[] { mac });
 		if (tokenList.size() == 0)
 			return;
 
@@ -203,17 +185,13 @@ public class InterfaceServiceImp extends BaseService implements
 		token = tt.getToken();
 
 		Date date = new Date();
-		List<TGameUpdatePush> list = this
-				.getAppstoreDao()
-				.findList(
-						"from TGameUpdatePush a where a.mac=? and a.date=? and a.appId=?",
-						new Object[] { mac, new Date(), appId });
+		List<TGameUpdatePush> list = this.getAppstoreDao().findList(
+				"from TGameUpdatePush a where a.mac=? and a.date=? and a.appId=?",
+				new Object[] { mac, new Date(), appId });
 		if (list.size() == 0) {
 			// 使用信鸽发送push
-			new XgUtil(title, updateDes).pushSingleDeviceNotification(token,
-					accessId, secretKey);
-			LOGGER.info("token:[" + token + "];push content:[" + updateDes
-					+ "]");
+			new XgUtil(title, updateDes).pushSingleDeviceNotification(token, accessId, secretKey);
+			LOGGER.info("token:[" + token + "];push content:[" + updateDes + "]");
 
 			TGameUpdatePush push = new TGameUpdatePush();
 			push.setAppId(appId);
@@ -227,8 +205,7 @@ public class InterfaceServiceImp extends BaseService implements
 	/**
 	 * 判断平台版本（目前平台版本概念不存在，使用应用版本检查）
 	 */
-	public String checkPlatFormVersion(Map<String, String> para)
-			throws AppBizException {
+	public String checkPlatFormVersion(Map<String, String> para) throws AppBizException {
 		return this.checkAppVersion(para);
 	}
 
@@ -239,58 +216,51 @@ public class InterfaceServiceImp extends BaseService implements
 	 * @return
 	 * @throws AppBizException
 	 */
-	private String checkAppVersion(Map<String, String> para)
-			throws AppBizException {
+	private String checkAppVersion(Map<String, String> para) throws AppBizException {
 		String mac = para.get("mac");
-		if (StringUtils.isEmpty(mac)) {// 如果mac没有，需要找回，或新增
-			String androidId = ParaUtils.checkStringAndGet(
-					para.get("androidId"), "androidId");
-			String deviceId = ParaUtils.checkStringAndGet(para.get("deviceId"),
-					"deviceId");
-			String batchId = ParaUtils.checkStringAndGet(para.get("batchId"),
-					"batchId");
+		try {
+			if (StringUtils.isEmpty(mac)) {// 如果mac没有，需要找回，或新增
+				String androidId = ParaUtils.checkStringAndGet(para.get("androidId"), "androidId");
+				String deviceId = ParaUtils.checkStringAndGet(para.get("deviceId"), "deviceId");
+				String batchId = ParaUtils.checkStringAndGet(para.get("batchId"), "batchId");
 
-			String ver = para.get("ver") == null ? "" : para.get("ver");
+				String ver = para.get("ver") == null ? "" : para.get("ver");
 
-			TDeviceMacInfo macInfo = deviceMacInfoService.getMac(androidId,
-					deviceId);
-			if (macInfo != null) {
-				mac = macInfo.getMac().toString();
-			}
-			if (StringUtils.isBlank(mac)) {
-				mac = deviceMacInfoService.add(androidId, deviceId, batchId,
-						getProvince(para), para.get("ip"),
-						Constants.DEFAULT_APP_ID, ver, para.get("osType"));
+				TDeviceMacInfo macInfo = deviceMacInfoService.getMac(androidId, deviceId);
+				if (macInfo != null) {
+					mac = macInfo.getMac().toString();
+				}
+				if (StringUtils.isBlank(mac)) {
+					mac = deviceMacInfoService.add(androidId, deviceId, batchId, getProvince(para), para.get("ip"),
+							Constants.DEFAULT_APP_ID, ver, para.get("osType"));
+				} else {
+					if (StringUtils.isEmpty(macInfo.getIp()) || "".equals(macInfo.getIp())) {
+						deviceMacInfoService.upProvince(macInfo, getProvince(para), para.get("ip"));
+					}
+				}
 			} else {
-				if (StringUtils.isEmpty(macInfo.getIp())
-						|| "".equals(macInfo.getIp())) {
-					deviceMacInfoService.upProvince(macInfo, getProvince(para),
-							para.get("ip"));
+				if (!StringUtils.isNumeric(mac)) {
+					throw new AppBizException(AppExcCodes.E_INVALID_PARA, "mac is not number");
+				}
+				TDeviceMacInfo info = (TDeviceMacInfo) this.getAppstoreDao().get(TDeviceMacInfo.class,
+						Integer.valueOf(mac));
+				if (info == null) {
+					throw new AppBizException(AppExcCodes.E_INVALID_PARA, "mac is not found");
+				} else {
+					if (StringUtils.isEmpty(info.getIp()) || "".equals(info.getIp())) {
+						deviceMacInfoService.upProvince(info, getProvince(para), para.get("ip"));
+					}
 				}
 			}
-		} else {
-			if (!StringUtils.isNumeric(mac)) {
-				throw new AppBizException(AppExcCodes.E_INVALID_PARA,
-						"mac is not number");
-			}
-			TDeviceMacInfo info = (TDeviceMacInfo) this.getAppstoreDao().get(
-					TDeviceMacInfo.class, Integer.valueOf(mac));
-			if (info == null) {
-				throw new AppBizException(AppExcCodes.E_INVALID_PARA,
-						"mac is not found");
-			} else {
-				if (StringUtils.isEmpty(info.getIp())
-						|| "".equals(info.getIp())) {
-					deviceMacInfoService.upProvince(info, getProvince(para),
-							para.get("ip"));
-				}
-			}
+		} catch (Exception e) {
+			System.out
+					.println("mac=" + mac + "androidId=" + para.get("androidId") + "deviceId=" + para.get("deviceId"));
+			LOGGER.error("mac=" + mac + "androidId=" + para.get("androidId") + "deviceId=" + para.get("deviceId"));
 		}
 
 		// 记录每个游戏每台手机最后一次访问的batchId
 		deviceMacInfoService.addMacLastBatch(mac, Constants.DEFAULT_APP_ID,
-				para.get("batchId") == null ? "" : para.get("batchId")
-						.toString());
+				para.get("batchId") == null ? "" : para.get("batchId").toString());
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("appname", "AppStore");
@@ -298,9 +268,7 @@ public class InterfaceServiceImp extends BaseService implements
 		map.put("versionname", "1.0");
 		map.put("isForced", "1"); // 1为强制更新，其他为普通更新
 		map.put("updateinfo", "test");
-		map.put("downUrl",
-				"http://api.np.mobilem.360.cn/redirect/down/?from=aiqi&appid=56");
-
+		map.put("downUrl", "http://api.np.mobilem.360.cn/redirect/down/?from=aiqi&appid=56");
 		map.put("mac", mac);
 		return MarketUtils.getResJson(JSONObject.fromObject(map).toString());
 	}
@@ -308,34 +276,24 @@ public class InterfaceServiceImp extends BaseService implements
 	private int getProvince(Map<String, String> para) {
 		int province = 0;
 		try {
-			if (this.getMemProgrammer().get(
-					"getProvince_province_" + para.get("ip")) == null) {
+			if (this.getMemProgrammer().get("getProvince_province_" + para.get("ip")) == null) {
 				if (null == para.get("province")) {
-					List<Object> provinceList = this
-							.getAppstoreDao()
-							.findListBySql(
-									"select province from t_province_ip where inet_aton(?) >= ip_start and ip_end >= inet_aton(?)",
-									new Object[] { para.get("ip"),
-											para.get("ip") });
+					List<Object> provinceList = this.getAppstoreDao().findListBySql(
+							"select province from t_province_ip where inet_aton(?) >= ip_start and ip_end >= inet_aton(?)",
+							new Object[] { para.get("ip"), para.get("ip") });
 					if (provinceList.size() > 0) {
-						Map<String, Object> map = (Map<String, Object>) provinceList
-								.get(0);
-						if (StringUtils.isNotEmpty(String.valueOf(map
-								.get("province"))))
-							province = Integer.parseInt(map.get("province")
-									.toString());
+						Map<String, Object> map = (Map<String, Object>) provinceList.get(0);
+						if (StringUtils.isNotEmpty(String.valueOf(map.get("province"))))
+							province = Integer.parseInt(map.get("province").toString());
 					}
 				} else {
-					if (!"".equals(para.get("province"))
-							&& StringUtils.isNumeric(para.get("province")))
+					if (!"".equals(para.get("province")) && StringUtils.isNumeric(para.get("province")))
 						province = Integer.parseInt(para.get("province"));
 				}
 
-				this.getMemProgrammer().set(
-						"getProvince_province_" + para.get("ip"), province);
+				this.getMemProgrammer().set("getProvince_province_" + para.get("ip"), province);
 			} else {
-				province = (Integer) this.getMemProgrammer().get(
-						"getProvince_province_" + para.get("ip"));
+				province = (Integer) this.getMemProgrammer().get("getProvince_province_" + para.get("ip"));
 			}
 		} catch (DataAccessException e) {
 			e.printStackTrace();
@@ -348,8 +306,7 @@ public class InterfaceServiceImp extends BaseService implements
 	}
 
 	@Override
-	public Map<String, Object> queryRecommendList(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> queryRecommendList(Map<String, String> para) throws Exception {
 		MyUtil mu = MyUtil.getInstance();
 		int sort = 1;
 		List<Object> plist = new ArrayList<Object>();
@@ -359,27 +316,28 @@ public class InterfaceServiceImp extends BaseService implements
 		Map<String, Object> subjectMap = new LinkedHashMap<String, Object>();
 		sql.append("SELECT * FROM ( ");
 		sql.append("SELECT * FROM ( ");
-		sql.append("SELECT t3.sort, t5.theme_id subj_id, CONCAT(t2.name) subj_name, t4.pic subj_pic, t7.cat1_name, t7.cat2_name, t6.*,t4.rtype  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
-				+ sort
-				+ ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
+		sql.append(
+				"SELECT t3.sort, t5.theme_id subj_id, CONCAT(t2.name) subj_name, t4.pic subj_pic, t7.cat1_name, t7.cat2_name, t6.*,t4.rtype  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
+						+ sort + ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
 		sql.append("LEFT JOIN t_app_theme_bag_list t3 ON t3.sub_type = 2 AND t2.id = t3.theme_bag_id ");
 		sql.append("LEFT JOIN t_app_theme t4 ON t3.sub_id = t4.id ");
 		sql.append("LEFT JOIN t_app_theme_list t5 ON t4.id = t5.theme_id ");
 		sql.append("LEFT JOIN t_app t6 ON t5.app_id = t6.id ");
-		sql.append("LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
+		sql.append(
+				"LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
 		sql.append("ORDER BY t3.sort, t5.sort) t1 ");
 		sql.append("UNION ALL ");
 		sql.append("SELECT * FROM ( ");
-		sql.append("SELECT t3.sort, 0 subj_id, CONCAT(t2.name) subj_name, '' subj_pic, t7.cat1_name, t7.cat2_name, t6.*, '' rtype FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
-				+ sort
-				+ ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
+		sql.append(
+				"SELECT t3.sort, 0 subj_id, CONCAT(t2.name) subj_name, '' subj_pic, t7.cat1_name, t7.cat2_name, t6.*, '' rtype FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
+						+ sort + ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
 		sql.append("LEFT JOIN t_app_theme_bag_list t3 ON t3.sub_type = 1 AND t2.id = t3.theme_bag_id ");
 		sql.append("LEFT JOIN t_app t6 ON t3.sub_id = t6.id ");
-		sql.append("LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
+		sql.append(
+				"LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
 		sql.append("ORDER BY t3.sort) t2 ");
 		sql.append(") t1 WHERE t1.sort IS NOT NULL ORDER BY t1.sort");
-		List<Map<String, Object>> rlist = this.getAppstoreDao()
-				.findListMapBySql(sql.toString(), plist.toArray());
+		List<Map<String, Object>> rlist = this.getAppstoreDao().findListMapBySql(sql.toString(), plist.toArray());
 		Map<String, Integer> cThemeMap = new LinkedHashMap<String, Integer>();
 		for (Map<String, Object> map : rlist) {
 			String subjId = map.get("subj_id").toString();
@@ -414,8 +372,7 @@ public class InterfaceServiceImp extends BaseService implements
 			if (isThemeMap.get(subjId)) {
 				if (!countMap.containsKey(subjId)) {
 					appMap.put("id", Integer.parseInt(subjId));
-					appMap.put("pic",
-							ParaUtils.checkPicUri(map.get("subj_pic")));
+					appMap.put("pic", ParaUtils.checkPicUri(map.get("subj_pic")));
 					appMap.put("type", 2);
 					list.add(appMap);
 					countMap.put(subjId, true);
@@ -425,19 +382,16 @@ public class InterfaceServiceImp extends BaseService implements
 			appMap.put("id", Integer.parseInt(map.get("id").toString()));
 
 			subPic = ParaUtils.checkPicUri(map.get("icon"));
-			if (null != map.get("subj_pic")
-					&& !"".equals(map.get("subj_pic").toString()))
+			if (null != map.get("subj_pic") && !"".equals(map.get("subj_pic").toString()))
 				subPic = ParaUtils.checkPicUri(map.get("subj_pic"));
 			appMap.put("pic", subPic);
-			if (null != map.get("rtype")
-					&& !"".equals(map.get("rtype").toString()))
+			if (null != map.get("rtype") && !"".equals(map.get("rtype").toString()))
 				type = map.get("rtype").toString();
 			appMap.put("type", type);
 
 			appMap.put("categoryId", map.get("category_id"));
-			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para
-					.get("batchId"), para.get("mac"), "", map.get("id")
-					.toString()));
+			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("package", map.get("pakeage"));
 			appMap.put("name", map.get("name"));
@@ -455,15 +409,13 @@ public class InterfaceServiceImp extends BaseService implements
 			Map<String, Object> infoMap = new LinkedHashMap<String, Object>();
 			infoMap.put("company", map.get("develope"));
 			infoMap.put("classify", map.get("cat2_name"));
-			infoMap.put("lastestUpdate",
-					mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
+			infoMap.put("lastestUpdate", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
 			infoMap.put("version", map.get("version"));
 			infoMap.put("size", df.format(map.get("app_size")));
 			infoMap.put("ageLimit", map.get("age_limit"));
 			infoMap.put("compaticity", map.get("os_version_min"));
 			appMap.put("infomation", infoMap);
-			appMap.put("deployTime", mu.formateDate(map.get("uptime")
-					.toString(), "yyyy-MM-dd HH:mm:ss"));
+			appMap.put("deployTime", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd HH:mm:ss"));
 			list.add(appMap);
 		}
 		subjectMap.put("list", list);
@@ -473,8 +425,7 @@ public class InterfaceServiceImp extends BaseService implements
 	}
 
 	@Override
-	public Map<String, Object> queryAppList(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> queryAppList(Map<String, String> para) throws Exception {
 		MyUtil mu = MyUtil.getInstance();
 		String type = para.get("type");
 		int sort = 0;
@@ -497,37 +448,40 @@ public class InterfaceServiceImp extends BaseService implements
 		Map<String, Object> subjectMap = new LinkedHashMap<String, Object>();
 		if (StringUtils.isNotEmpty(recommendId)) {
 			sql.append("SELECT * FROM ( ");
-			sql.append("SELECT t5.theme_id subj_id, CONCAT(t4.name) subj_name, t4.pic subj_pic, t7.cat1_name, t7.cat2_name, t6.*,t4.rtype  FROM ");
+			sql.append(
+					"SELECT t5.theme_id subj_id, CONCAT(t4.name) subj_name, t4.pic subj_pic, t7.cat1_name, t7.cat2_name, t6.*,t4.rtype  FROM ");
 			sql.append(" t_app_theme t4 ");
 			sql.append("LEFT JOIN t_app_theme_list t5 ON t4.id = t5.theme_id ");
 			sql.append("LEFT JOIN t_app t6 ON t5.app_id = t6.id ");
-			sql.append("LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
+			sql.append(
+					"LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
 			sql.append("ORDER BY t5.sort) t1 where t1.subj_id= " + recommendId);
 		} else {
 			sql.append("SELECT * FROM ( ");
 			sql.append("SELECT * FROM ( ");
-			sql.append("SELECT t3.sort, t5.theme_id subj_id, CONCAT(t2.name) subj_name, t4.pic subj_pic, t7.cat1_name, t7.cat2_name, t6.*,t4.rtype  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
-					+ sort
-					+ ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
+			sql.append(
+					"SELECT t3.sort, t5.theme_id subj_id, CONCAT(t2.name) subj_name, t4.pic subj_pic, t7.cat1_name, t7.cat2_name, t6.*,t4.rtype  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
+							+ sort + ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
 			sql.append("LEFT JOIN t_app_theme_bag_list t3 ON t3.sub_type = 2 AND t2.id = t3.theme_bag_id ");
 			sql.append("LEFT JOIN t_app_theme t4 ON t3.sub_id = t4.id ");
 			sql.append("LEFT JOIN t_app_theme_list t5 ON t4.id = t5.theme_id ");
 			sql.append("LEFT JOIN t_app t6 ON t5.app_id = t6.id ");
-			sql.append("LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
+			sql.append(
+					"LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
 			sql.append("ORDER BY t3.sort, t5.sort) t1 ");
 			sql.append("UNION ALL ");
 			sql.append("SELECT * FROM ( ");
-			sql.append("SELECT t3.sort, 0 subj_id, CONCAT(t2.name) subj_name, '' subj_pic, t7.cat1_name, t7.cat2_name, t6.*,'' rtype  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
-					+ sort
-					+ ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
+			sql.append(
+					"SELECT t3.sort, 0 subj_id, CONCAT(t2.name) subj_name, '' subj_pic, t7.cat1_name, t7.cat2_name, t6.*,'' rtype  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
+							+ sort + ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
 			sql.append("LEFT JOIN t_app_theme_bag_list t3 ON t3.sub_type = 1 AND t2.id = t3.theme_bag_id ");
 			sql.append("LEFT JOIN t_app t6 ON t3.sub_id = t6.id ");
-			sql.append("LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
+			sql.append(
+					"LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
 			sql.append("ORDER BY t3.sort) t2 ");
 			sql.append(") t1 WHERE t1.sort IS NOT NULL ORDER BY t1.sort");
 		}
-		List<Map<String, Object>> rlist = this.getAppstoreDao()
-				.findListMapBySql(sql.toString(), plist.toArray());
+		List<Map<String, Object>> rlist = this.getAppstoreDao().findListMapBySql(sql.toString(), plist.toArray());
 		Map<String, Integer> cThemeMap = new LinkedHashMap<String, Integer>();
 		for (Map<String, Object> map : rlist) {
 			String subjId = map.get("subj_id").toString();
@@ -555,10 +509,10 @@ public class InterfaceServiceImp extends BaseService implements
 		Map<String, Boolean> countMap = new LinkedHashMap<String, Boolean>();
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> recordeApp = new ArrayList<Map<String, Object>>();
+		Integer ver = Integer.parseInt(para.get("ver").split("\\.")[0]);
 		if ((para.get("type").equals("1") | para.get("type").equals("2"))
-				&& (para.get("mac") != null && para.get("mac") != "")) {
-			recordeApp = this.getAppstoreDao().findListMapBySql(
-					"SELECT packageName FROM t_user_appInfo WHERE mac = ?",
+				&& (para.get("mac") != null && para.get("mac") != "" && ver < 5)) {
+			recordeApp = this.getAppstoreDao().findListMapBySql("SELECT packageName FROM t_user_appInfo WHERE mac = ?",
 					new Object[] { para.get("mac") });
 			for (int i = 0; i < recordeApp.size(); i++) {
 				Map<String, Object> map1 = recordeApp.get(i);
@@ -569,11 +523,11 @@ public class InterfaceServiceImp extends BaseService implements
 					}
 				}
 			}
+			if (rlist.size() < 4) {
+				rlist = this.getAppstoreDao().findListMapBySql(sql.toString(), plist.toArray());
+			}
 		}
-		if (rlist.size() < 4) {
-			rlist = this.getAppstoreDao().findListMapBySql(sql.toString(),
-					plist.toArray());
-		}
+
 		for (int i = 0; i < rlist.size(); i++) {
 			Map<String, Object> map = rlist.get(i);
 			String subjId = map.get("subj_id").toString();
@@ -591,9 +545,8 @@ public class InterfaceServiceImp extends BaseService implements
 			}
 			appMap.put("id", Integer.parseInt(map.get("id").toString()));
 			appMap.put("categoryId", map.get("category_id"));
-			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para
-					.get("batchId"), para.get("mac"), "", map.get("id")
-					.toString()));
+			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
 			appMap.put("summary", map.get("app_desc"));
@@ -612,10 +565,8 @@ public class InterfaceServiceImp extends BaseService implements
 			infoMap.put("company", map.get("develope"));
 			infoMap.put("classify", map.get("cat2_name"));
 			if (map.get("uptime") != null) {
-				infoMap.put("lastestUpdate", mu.formateDate(map.get("uptime")
-						.toString(), "yyyy-MM-dd"));
-				appMap.put("deployTime", mu.formateDate(map.get("uptime")
-						.toString(), "yyyy-MM-dd HH:mm:ss"));
+				infoMap.put("lastestUpdate", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
+				appMap.put("deployTime", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd HH:mm:ss"));
 			}
 
 			infoMap.put("version", map.get("version"));
@@ -633,8 +584,7 @@ public class InterfaceServiceImp extends BaseService implements
 	}
 
 	@Override
-	public Map<String, Object> queryThemePicList(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> queryThemePicList(Map<String, String> para) throws Exception {
 		MyUtil mu = MyUtil.getInstance();
 		String type = para.get("type");
 		int sort = 0;
@@ -652,27 +602,28 @@ public class InterfaceServiceImp extends BaseService implements
 		Map<String, Object> subjectMap = new LinkedHashMap<String, Object>();
 		sql.append("SELECT * FROM ( ");
 		sql.append("SELECT * FROM ( ");
-		sql.append("SELECT t3.sort, t5.theme_id subj_id, CONCAT(t2.name) subj_name, t4.pic subj_pic, t7.cat1_name, t7.cat2_name, t6.*,t4.rtype  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
-				+ sort
-				+ ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
+		sql.append(
+				"SELECT t3.sort, t5.theme_id subj_id, CONCAT(t2.name) subj_name, t4.pic subj_pic, t7.cat1_name, t7.cat2_name, t6.*,t4.rtype  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
+						+ sort + ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
 		sql.append("LEFT JOIN t_app_theme_bag_list t3 ON t3.sub_type = 2 AND t2.id = t3.theme_bag_id ");
 		sql.append("LEFT JOIN t_app_theme t4 ON t3.sub_id = t4.id ");
 		sql.append("LEFT JOIN t_app_theme_list t5 ON t4.id = t5.theme_id ");
 		sql.append("LEFT JOIN t_app t6 ON t5.app_id = t6.id ");
-		sql.append("LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
+		sql.append(
+				"LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
 		sql.append("ORDER BY t3.sort, t5.sort) t1 ");
 		sql.append("UNION ALL ");
 		sql.append("SELECT * FROM ( ");
-		sql.append("SELECT t3.sort, 0 subj_id, CONCAT(t2.name) subj_name, '' subj_pic, t7.cat1_name, t7.cat2_name, t6.*,'' rtype  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
-				+ sort
-				+ ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
+		sql.append(
+				"SELECT t3.sort, 0 subj_id, CONCAT(t2.name) subj_name, '' subj_pic, t7.cat1_name, t7.cat2_name, t6.*,'' rtype  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
+						+ sort + ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
 		sql.append("LEFT JOIN t_app_theme_bag_list t3 ON t3.sub_type = 1 AND t2.id = t3.theme_bag_id ");
 		sql.append("LEFT JOIN t_app t6 ON t3.sub_id = t6.id ");
-		sql.append("LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
+		sql.append(
+				"LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
 		sql.append("ORDER BY t3.sort) t2 ");
 		sql.append(") t1 WHERE t1.sort IS NOT NULL ORDER BY t1.sort");
-		List<Map<String, Object>> rlist = this.getAppstoreDao()
-				.findListMapBySql(sql.toString(), plist.toArray());
+		List<Map<String, Object>> rlist = this.getAppstoreDao().findListMapBySql(sql.toString(), plist.toArray());
 		Map<String, Integer> cThemeMap = new LinkedHashMap<String, Integer>();
 		for (Map<String, Object> map : rlist) {
 			String subjId = map.get("subj_id").toString();
@@ -703,8 +654,7 @@ public class InterfaceServiceImp extends BaseService implements
 			if (isThemeMap.get(subjId)) {
 				if (!countMap.containsKey(subjId)) {
 					appMap.put("id", Integer.parseInt(subjId));
-					appMap.put("pic",
-							ParaUtils.checkPicUri(map.get("subj_pic")));
+					appMap.put("pic", ParaUtils.checkPicUri(map.get("subj_pic")));
 					appMap.put("type", 2);
 					list.add(appMap);
 					countMap.put(subjId, true);
@@ -716,19 +666,16 @@ public class InterfaceServiceImp extends BaseService implements
 			appMap.put("type", 1);
 
 			subPic = ParaUtils.checkPicUri(map.get("icon"));
-			if (null != map.get("subj_pic")
-					&& !"".equals(map.get("subj_pic").toString()))
+			if (null != map.get("subj_pic") && !"".equals(map.get("subj_pic").toString()))
 				subPic = ParaUtils.checkPicUri(map.get("subj_pic"));
 			appMap.put("pic", subPic);
-			if (null != map.get("rtype")
-					&& !"".equals(map.get("rtype").toString()))
+			if (null != map.get("rtype") && !"".equals(map.get("rtype").toString()))
 				rtype = map.get("rtype").toString();
 			appMap.put("type", rtype);
 
 			appMap.put("categoryId", map.get("category_id"));
-			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para
-					.get("batchId"), para.get("mac"), "", map.get("id")
-					.toString()));
+			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
 			appMap.put("summary", map.get("app_desc"));
@@ -746,15 +693,13 @@ public class InterfaceServiceImp extends BaseService implements
 			Map<String, Object> infoMap = new LinkedHashMap<String, Object>();
 			infoMap.put("company", map.get("develope"));
 			infoMap.put("classify", map.get("cat2_name"));
-			infoMap.put("lastestUpdate",
-					mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
+			infoMap.put("lastestUpdate", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
 			infoMap.put("version", map.get("version"));
 			infoMap.put("size", df.format(map.get("app_size")));
 			infoMap.put("ageLimit", map.get("age_limit"));
 			infoMap.put("compaticity", map.get("os_version_min"));
 			appMap.put("infomation", infoMap);
-			appMap.put("deployTime", mu.formateDate(map.get("uptime")
-					.toString(), "yyyy-MM-dd HH:mm:ss"));
+			appMap.put("deployTime", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd HH:mm:ss"));
 			list.add(appMap);
 		}
 		subjectMap.put("list", list);
@@ -764,8 +709,7 @@ public class InterfaceServiceImp extends BaseService implements
 	}
 
 	@Override
-	public Map<String, Object> queryCommentList(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> queryCommentList(Map<String, String> para) throws Exception {
 		MyUtil mu = MyUtil.getInstance();
 		StringBuffer sql = new StringBuffer();
 		List<Object> plist = new ArrayList<Object>();
@@ -777,8 +721,7 @@ public class InterfaceServiceImp extends BaseService implements
 			sql.append(" and app_id=?");
 			plist.add(para.get("appId"));
 		}
-		List<Map<String, Object>> rlist = this.getAppstoreDao()
-				.findListMapBySql(sql.toString(), plist.toArray());
+		List<Map<String, Object>> rlist = this.getAppstoreDao().findListMapBySql(sql.toString(), plist.toArray());
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		for (Map<String, Object> temp : rlist) {
 			Map<String, Object> map = new LinkedHashMap<String, Object>();
@@ -787,8 +730,7 @@ public class InterfaceServiceImp extends BaseService implements
 			map.put("userName", temp.get("nickname"));
 			map.put("ret", temp.get("grade"));
 			map.put("comment", temp.get("content"));
-			map.put("time", mu.formateDate(temp.get("ctime").toString(),
-					"yyyy-MM-dd HH:mm:ss"));
+			map.put("time", mu.formateDate(temp.get("ctime").toString(), "yyyy-MM-dd HH:mm:ss"));
 			list.add(map);
 		}
 		subjectMap.put("list", list);
@@ -798,8 +740,7 @@ public class InterfaceServiceImp extends BaseService implements
 	}
 
 	@Override
-	public Map<String, Object> addComment(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> addComment(Map<String, String> para) throws Exception {
 		MyUtil mu = MyUtil.getInstance();
 		Map<String, Object> rmap = new LinkedHashMap<String, Object>();
 		rmap.put("result", 1);
@@ -823,8 +764,7 @@ public class InterfaceServiceImp extends BaseService implements
 	}
 
 	@Override
-	public Map<String, Object> getRank(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> getRank(Map<String, String> para) throws Exception {
 		MyUtil mu = MyUtil.getInstance();
 		String type = para.get("type");
 		int sort = 0;
@@ -842,34 +782,34 @@ public class InterfaceServiceImp extends BaseService implements
 		Map<String, Object> subjectMap = new LinkedHashMap<String, Object>();
 		sql.append("SELECT * FROM ( ");
 		sql.append("SELECT * FROM ( ");
-		sql.append("SELECT t3.sort, t5.theme_id subj_id, CONCAT(t2.name) subj_name, t4.pic subj_pic, t7.cat1_name, t7.cat2_name, t6.*  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
-				+ sort
-				+ ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
+		sql.append(
+				"SELECT t3.sort, t5.theme_id subj_id, CONCAT(t2.name) subj_name, t4.pic subj_pic, t7.cat1_name, t7.cat2_name, t6.*  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
+						+ sort + ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
 		sql.append("LEFT JOIN t_app_theme_bag_list t3 ON t3.sub_type = 2 AND t2.id = t3.theme_bag_id ");
 		sql.append("LEFT JOIN t_app_theme t4 ON t3.sub_id = t4.id ");
 		sql.append("LEFT JOIN t_app_theme_list t5 ON t4.id = t5.theme_id ");
 		sql.append("LEFT JOIN t_app t6 ON t5.app_id = t6.id ");
-		sql.append("LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
+		sql.append(
+				"LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
 		sql.append("ORDER BY t3.sort, t5.sort) t1 ");
 		sql.append("UNION ALL ");
 		sql.append("SELECT * FROM ( ");
-		sql.append("SELECT t3.sort, 0 subj_id, CONCAT(t2.name) subj_name, '' subj_pic, t7.cat1_name, t7.cat2_name, t6.*  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
-				+ sort
-				+ ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
+		sql.append(
+				"SELECT t3.sort, 0 subj_id, CONCAT(t2.name) subj_name, '' subj_pic, t7.cat1_name, t7.cat2_name, t6.*  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
+						+ sort + ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
 		sql.append("LEFT JOIN t_app_theme_bag_list t3 ON t3.sub_type = 1 AND t2.id = t3.theme_bag_id ");
 		sql.append("LEFT JOIN t_app t6 ON t3.sub_id = t6.id ");
-		sql.append("LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
+		sql.append(
+				"LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
 		sql.append("ORDER BY t3.sort) t2 ");
 		sql.append(") t1 WHERE t1.sort IS NOT NULL ORDER BY t1.sort");
 		PageBar pb = new PageBar(para);
-		if (mu.isNotBlank(para.get("pageNo"))
-				&& NumberUtils.isDigits(para.get("pageNo")))
+		if (mu.isNotBlank(para.get("pageNo")) && NumberUtils.isDigits(para.get("pageNo")))
 			pb.setCurrentPageNum(para.get("pageNo"));
-		if (mu.isNotBlank(para.get("pageSize"))
-				&& NumberUtils.isDigits(para.get("pageSize")))
+		if (mu.isNotBlank(para.get("pageSize")) && NumberUtils.isDigits(para.get("pageSize")))
 			pb.setEveryPageNum(para.get("pageSize"));
-		List<Map<String, Object>> rlist = this.getAppstoreDao()
-				.findListMapPageBySql(sql.toString(), plist.toArray(), pb);
+		List<Map<String, Object>> rlist = this.getAppstoreDao().findListMapPageBySql(sql.toString(), plist.toArray(),
+				pb);
 		Map<String, Integer> cThemeMap = new LinkedHashMap<String, Integer>();
 		for (Map<String, Object> map : rlist) {
 			String subjId = map.get("subj_id").toString();
@@ -908,9 +848,8 @@ public class InterfaceServiceImp extends BaseService implements
 			}
 			appMap.put("id", Integer.parseInt(map.get("id").toString()));
 			appMap.put("categoryId", map.get("category_id"));
-			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para
-					.get("batchId"), para.get("mac"), "", map.get("id")
-					.toString()));
+			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
 			appMap.put("summary", map.get("app_desc"));
@@ -928,10 +867,8 @@ public class InterfaceServiceImp extends BaseService implements
 			infoMap.put("company", map.get("develope"));
 			infoMap.put("classify", map.get("cat2_name"));
 			if (map.get("uptime") != null) {
-				infoMap.put("lastestUpdate", mu.formateDate(map.get("uptime")
-						.toString(), "yyyy-MM-dd"));
-				appMap.put("deployTime", mu.formateDate(map.get("uptime")
-						.toString(), "yyyy-MM-dd HH:mm:ss"));
+				infoMap.put("lastestUpdate", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
+				appMap.put("deployTime", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd HH:mm:ss"));
 			}
 			infoMap.put("version", map.get("version"));
 			infoMap.put("size", df.format(map.get("app_size")));
@@ -948,8 +885,7 @@ public class InterfaceServiceImp extends BaseService implements
 	}
 
 	@Override
-	public Map<String, Object> nearmeApp(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> nearmeApp(Map<String, String> para) throws Exception {
 		MyUtil mu = MyUtil.getInstance();
 		int sort = 13;
 		List<Object> plist = new ArrayList<Object>();
@@ -959,27 +895,28 @@ public class InterfaceServiceImp extends BaseService implements
 		Map<String, Object> subjectMap = new LinkedHashMap<String, Object>();
 		sql.append("SELECT * FROM ( ");
 		sql.append("SELECT * FROM ( ");
-		sql.append("SELECT t3.sort, t5.theme_id subj_id, CONCAT(t2.name) subj_name, t4.pic subj_pic, t7.cat1_name, t7.cat2_name, t6.*  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
-				+ sort
-				+ ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
+		sql.append(
+				"SELECT t3.sort, t5.theme_id subj_id, CONCAT(t2.name) subj_name, t4.pic subj_pic, t7.cat1_name, t7.cat2_name, t6.*  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
+						+ sort + ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
 		sql.append("LEFT JOIN t_app_theme_bag_list t3 ON t3.sub_type = 2 AND t2.id = t3.theme_bag_id ");
 		sql.append("LEFT JOIN t_app_theme t4 ON t3.sub_id = t4.id ");
 		sql.append("LEFT JOIN t_app_theme_list t5 ON t4.id = t5.theme_id ");
 		sql.append("LEFT JOIN t_app t6 ON t5.app_id = t6.id ");
-		sql.append("LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
+		sql.append(
+				"LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
 		sql.append("ORDER BY t3.sort, t5.sort) t1 ");
 		sql.append("UNION ALL ");
 		sql.append("SELECT * FROM ( ");
-		sql.append("SELECT t3.sort, 0 subj_id, CONCAT(t2.name) subj_name, '' subj_pic, t7.cat1_name, t7.cat2_name, t6.*  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
-				+ sort
-				+ ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
+		sql.append(
+				"SELECT t3.sort, 0 subj_id, CONCAT(t2.name) subj_name, '' subj_pic, t7.cat1_name, t7.cat2_name, t6.*  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
+						+ sort + ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
 		sql.append("LEFT JOIN t_app_theme_bag_list t3 ON t3.sub_type = 1 AND t2.id = t3.theme_bag_id ");
 		sql.append("LEFT JOIN t_app t6 ON t3.sub_id = t6.id ");
-		sql.append("LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
+		sql.append(
+				"LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
 		sql.append("ORDER BY t3.sort) t2 ");
 		sql.append(") t1 WHERE t1.sort IS NOT NULL ORDER BY t1.sort");
-		List<Map<String, Object>> rlist = this.getAppstoreDao()
-				.findListMapBySql(sql.toString(), plist.toArray());
+		List<Map<String, Object>> rlist = this.getAppstoreDao().findListMapBySql(sql.toString(), plist.toArray());
 		Map<String, Integer> cThemeMap = new LinkedHashMap<String, Integer>();
 		for (Map<String, Object> map : rlist) {
 			String subjId = map.get("subj_id").toString();
@@ -1018,9 +955,8 @@ public class InterfaceServiceImp extends BaseService implements
 			}
 			appMap.put("id", Integer.parseInt(map.get("id").toString()));
 			appMap.put("categoryId", map.get("category_id"));
-			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para
-					.get("batchId"), para.get("mac"), "", map.get("id")
-					.toString()));
+			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
 			appMap.put("summary", map.get("app_desc"));
@@ -1038,15 +974,13 @@ public class InterfaceServiceImp extends BaseService implements
 			Map<String, Object> infoMap = new LinkedHashMap<String, Object>();
 			infoMap.put("company", map.get("develope"));
 			infoMap.put("classify", map.get("cat2_name"));
-			infoMap.put("lastestUpdate",
-					mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
+			infoMap.put("lastestUpdate", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
 			infoMap.put("version", map.get("version"));
 			infoMap.put("size", df.format(map.get("app_size")));
 			infoMap.put("ageLimit", map.get("age_limit"));
 			infoMap.put("compaticity", map.get("os_version_min"));
 			appMap.put("infomation", infoMap);
-			appMap.put("deployTime", mu.formateDate(map.get("uptime")
-					.toString(), "yyyy-MM-dd HH:mm:ss"));
+			appMap.put("deployTime", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd HH:mm:ss"));
 			list.add(appMap);
 		}
 		subjectMap.put("list", list);
@@ -1060,8 +994,7 @@ public class InterfaceServiceImp extends BaseService implements
 	 * 
 	 * @return
 	 */
-	private List<Map<String, Object>> sortSearchList(
-			List<Map<String, Object>> list, String keyName) {
+	private List<Map<String, Object>> sortSearchList(List<Map<String, Object>> list, String keyName) {
 		List<Map<String, Object>> rrList = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> tempList = new ArrayList<Map<String, Object>>();
 		tempList.addAll(list);
@@ -1082,8 +1015,7 @@ public class InterfaceServiceImp extends BaseService implements
 	 * 3.以点击下载次数优先排列 4.以ID号顺序排列 对处理过的查询数据按以上条件排序
 	 */
 	@Override
-	public Map<String, Object> searchApp(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> searchApp(Map<String, String> para) throws Exception {
 		MyUtil mu = MyUtil.getInstance();
 		String keyName = para.get("keyName");
 
@@ -1110,23 +1042,19 @@ public class InterfaceServiceImp extends BaseService implements
 			return rmap;
 		}
 		sql.append("FROM t_app t6 ");
-		sql.append("LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id left join t_app_category_hot t8 on t6.id=t8.app_id ");
+		sql.append(
+				"LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id left join t_app_category_hot t8 on t6.id=t8.app_id ");
 		sql.append("WHERE t6.name LIKE '%" + keyName + "%'");
 		sql.append("OR t6.app_tag LIKE '%" + keyName + "%'");
-		int totalSize = this.getAppstoreDao().findIntBySql(
-				"SELECT COUNT(1) " + sql, plist.toArray());
+		int totalSize = this.getAppstoreDao().findIntBySql("SELECT COUNT(1) " + sql, plist.toArray());
 		PageBar pb = new PageBar(para);
-		if (mu.isNotBlank(para.get("pageNo"))
-				&& NumberUtils.isDigits(para.get("pageNo")))
+		if (mu.isNotBlank(para.get("pageNo")) && NumberUtils.isDigits(para.get("pageNo")))
 			pb.setCurrentPageNum(para.get("pageNo"));
-		if (mu.isNotBlank(para.get("pageSize"))
-				&& NumberUtils.isDigits(para.get("pageSize")))
+		if (mu.isNotBlank(para.get("pageSize")) && NumberUtils.isDigits(para.get("pageSize")))
 			pb.setEveryPageNum("30");
 		sql.insert(0, "SELECT t7.cat1_name, t7.cat2_name, t6.*,t8.count ");
 		List<Map<String, Object>> rlist = this.getAppstoreDao()
-				.findListMapPageBySql(
-						sql.toString() + " ORDER BY t8.count desc",
-						plist.toArray(), pb);
+				.findListMapPageBySql(sql.toString() + " ORDER BY t8.count desc", plist.toArray(), pb);
 		DecimalFormat df = new DecimalFormat("#.00");
 
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
@@ -1136,9 +1064,8 @@ public class InterfaceServiceImp extends BaseService implements
 			Map<String, Object> appMap = new LinkedHashMap<String, Object>();
 			appMap.put("id", Integer.parseInt(map.get("id").toString()));
 			appMap.put("categoryId", map.get("category_id"));
-			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para
-					.get("batchId"), para.get("mac"), "", map.get("id")
-					.toString()));
+			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
 			appMap.put("summary", map.get("app_desc"));
@@ -1155,10 +1082,8 @@ public class InterfaceServiceImp extends BaseService implements
 			Map<String, Object> infoMap = new LinkedHashMap<String, Object>();
 			infoMap.put("company", map.get("develope"));
 			infoMap.put("classify", map.get("cat2_name"));
-			infoMap.put("lastestUpdate",
-					mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
-			appMap.put("deployTime", mu.formateDate(map.get("uptime")
-					.toString(), "yyyy-MM-dd HH:mm:ss"));
+			infoMap.put("lastestUpdate", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
+			appMap.put("deployTime", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd HH:mm:ss"));
 			infoMap.put("version", map.get("version"));
 			infoMap.put("size", df.format(map.get("app_size")));
 			infoMap.put("ageLimit", map.get("age_limit"));
@@ -1170,8 +1095,7 @@ public class InterfaceServiceImp extends BaseService implements
 			para.put("type", "3");
 			Map<String, Object> rank = getRank(para);
 			Map<String, Object> obj = (Map<String, Object>) rank.get("data");
-			List<Map<String, Object>> rankList = (List<Map<String, Object>>) obj
-					.get("list");
+			List<Map<String, Object>> rankList = (List<Map<String, Object>>) obj.get("list");
 			for (int i = 0; i < 30 - rlist.size(); i++) {
 				list.add(rankList.get(i));
 			}
@@ -1184,8 +1108,7 @@ public class InterfaceServiceImp extends BaseService implements
 	}
 
 	@Override
-	public Map<String, Object> getCategory(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> getCategory(Map<String, String> para) throws Exception {
 		MyUtil mu = MyUtil.getInstance();
 		List<Object> plist = new ArrayList<Object>();
 		StringBuffer sql = new StringBuffer();
@@ -1193,25 +1116,16 @@ public class InterfaceServiceImp extends BaseService implements
 		rmap.put("result", 1);
 		Map<String, Object> subjectMap = new LinkedHashMap<String, Object>();
 		PageBar pb = new PageBar(para);
-		if (mu.isNotBlank(para.get("pageNo"))
-				&& NumberUtils.isDigits(para.get("pageNo")))
+		if (mu.isNotBlank(para.get("pageNo")) && NumberUtils.isDigits(para.get("pageNo")))
 			pb.setCurrentPageNum(para.get("pageNo"));
-		if (mu.isNotBlank(para.get("pageSize"))
-				&& NumberUtils.isDigits(para.get("pageSize")))
+		if (mu.isNotBlank(para.get("pageSize")) && NumberUtils.isDigits(para.get("pageSize")))
 			pb.setEveryPageNum(para.get("pageSize"));
-		int totalSize = this
-				.getAppstoreDao()
-				.findIntBySql(
-						"SELECT COUNT(1) FROM t_app_category t1 WHERE t1.level = 2 ORDER BY t1.level, t1.seq",
-						plist.toArray());
-		List<Map<String, Object>> tlist = this
-				.getAppstoreDao()
-				.findListMapPageBySql(
-						"SELECT t1.* FROM t_app_category t1 WHERE t1.level = 2 ORDER BY t1.level, t1.seq",
-						plist.toArray(), pb);
+		int totalSize = this.getAppstoreDao().findIntBySql(
+				"SELECT COUNT(1) FROM t_app_category t1 WHERE t1.level = 2 ORDER BY t1.level, t1.seq", plist.toArray());
+		List<Map<String, Object>> tlist = this.getAppstoreDao().findListMapPageBySql(
+				"SELECT t1.* FROM t_app_category t1 WHERE t1.level = 2 ORDER BY t1.level, t1.seq", plist.toArray(), pb);
 		sql.append("SELECT t1.* FROM t_app_category t1 WHERE t1.level = 3 ORDER BY t1.level, t1.seq");
-		List<Map<String, Object>> rlist = this.getAppstoreDao()
-				.findListMapBySql(sql.toString(), plist.toArray());
+		List<Map<String, Object>> rlist = this.getAppstoreDao().findListMapBySql(sql.toString(), plist.toArray());
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		for (int i = 0; i < tlist.size(); i++) {
 			Map<String, Object> map = tlist.get(i);
@@ -1222,8 +1136,7 @@ public class InterfaceServiceImp extends BaseService implements
 			List<Map<String, Object>> subList = new ArrayList<Map<String, Object>>();
 			for (int j = 0; j < rlist.size(); j++) {
 				Map<String, Object> temp = rlist.get(j);
-				if (!map.get("id").toString()
-						.equals(temp.get("father_id").toString()))
+				if (!map.get("id").toString().equals(temp.get("father_id").toString()))
 					continue;
 				Map<String, Object> subMap = new HashMap<String, Object>();
 				subMap.put("subCategoryId", temp.get("id"));
@@ -1247,8 +1160,7 @@ public class InterfaceServiceImp extends BaseService implements
 	}
 
 	@Override
-	public Map<String, Object> gameCenterAppList(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> gameCenterAppList(Map<String, String> para) throws Exception {
 		MyUtil mu = MyUtil.getInstance();
 		String type = para.get("type");
 		int sort = 0;
@@ -1268,37 +1180,36 @@ public class InterfaceServiceImp extends BaseService implements
 		Map<String, Object> subjectMap = new LinkedHashMap<String, Object>();
 		sql.append("FROM ( ");
 		sql.append("SELECT * FROM ( ");
-		sql.append("SELECT t3.sort, t5.theme_id subj_id, CONCAT(t2.name) subj_name, t4.pic subj_pic, t7.cat1_name, t7.cat2_name, t6.*  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
-				+ sort
-				+ ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
+		sql.append(
+				"SELECT t3.sort, t5.theme_id subj_id, CONCAT(t2.name) subj_name, t4.pic subj_pic, t7.cat1_name, t7.cat2_name, t6.*  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
+						+ sort + ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
 		sql.append("LEFT JOIN t_app_theme_bag_list t3 ON t3.sub_type = 2 AND t2.id = t3.theme_bag_id ");
 		sql.append("LEFT JOIN t_app_theme t4 ON t3.sub_id = t4.id ");
 		sql.append("LEFT JOIN t_app_theme_list t5 ON t4.id = t5.theme_id ");
 		sql.append("LEFT JOIN t_app t6 ON t5.app_id = t6.id ");
-		sql.append("LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
+		sql.append(
+				"LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
 		sql.append("ORDER BY t3.sort, t5.sort) t1 ");
 		sql.append("UNION ALL ");
 		sql.append("SELECT * FROM ( ");
-		sql.append("SELECT t3.sort, 0 subj_id, CONCAT(t2.name) subj_name, '' subj_pic, t7.cat1_name, t7.cat2_name, t6.*  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
-				+ sort
-				+ ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
+		sql.append(
+				"SELECT t3.sort, 0 subj_id, CONCAT(t2.name) subj_name, '' subj_pic, t7.cat1_name, t7.cat2_name, t6.*  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
+						+ sort + ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
 		sql.append("LEFT JOIN t_app_theme_bag_list t3 ON t3.sub_type = 1 AND t2.id = t3.theme_bag_id ");
 		sql.append("LEFT JOIN t_app t6 ON t3.sub_id = t6.id ");
-		sql.append("LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
+		sql.append(
+				"LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
 		sql.append("ORDER BY t3.sort) t2 ");
 		sql.append(") t1 WHERE t1.sort IS NOT NULL ORDER BY t1.sort");
-		int totalSize = this.getAppstoreDao().findIntBySql(
-				"SELECT COUNT(1) " + sql, plist.toArray());
+		int totalSize = this.getAppstoreDao().findIntBySql("SELECT COUNT(1) " + sql, plist.toArray());
 		PageBar pb = new PageBar(para);
-		if (mu.isNotBlank(para.get("pageNo"))
-				&& NumberUtils.isDigits(para.get("pageNo")))
+		if (mu.isNotBlank(para.get("pageNo")) && NumberUtils.isDigits(para.get("pageNo")))
 			pb.setCurrentPageNum(para.get("pageNo"));
-		if (mu.isNotBlank(para.get("pageSize"))
-				&& NumberUtils.isDigits(para.get("pageSize")))
+		if (mu.isNotBlank(para.get("pageSize")) && NumberUtils.isDigits(para.get("pageSize")))
 			pb.setEveryPageNum(para.get("pageSize"));
 		sql.insert(0, "SELECT * ");
-		List<Map<String, Object>> rlist = this.getAppstoreDao()
-				.findListMapPageBySql(sql.toString(), plist.toArray(), pb);
+		List<Map<String, Object>> rlist = this.getAppstoreDao().findListMapPageBySql(sql.toString(), plist.toArray(),
+				pb);
 		DecimalFormat df = new DecimalFormat("#.00");
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		for (int i = 0; i < rlist.size(); i++) {
@@ -1306,9 +1217,8 @@ public class InterfaceServiceImp extends BaseService implements
 			Map<String, Object> appMap = new LinkedHashMap<String, Object>();
 			appMap.put("id", Integer.parseInt(map.get("id").toString()));
 			appMap.put("categoryId", map.get("category_id"));
-			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para
-					.get("batchId"), para.get("mac"), "", map.get("id")
-					.toString()));
+			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
 			appMap.put("summary", map.get("app_desc"));
@@ -1326,15 +1236,13 @@ public class InterfaceServiceImp extends BaseService implements
 			Map<String, Object> infoMap = new LinkedHashMap<String, Object>();
 			infoMap.put("company", map.get("develope"));
 			infoMap.put("classify", map.get("cat2_name"));
-			infoMap.put("lastestUpdate",
-					mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
+			infoMap.put("lastestUpdate", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
 			infoMap.put("version", map.get("version"));
 			infoMap.put("size", df.format(map.get("app_size")));
 			infoMap.put("ageLimit", map.get("age_limit"));
 			infoMap.put("compaticity", map.get("os_version_min"));
 			appMap.put("infomation", infoMap);
-			appMap.put("deployTime", mu.formateDate(map.get("uptime")
-					.toString(), "yyyy-MM-dd HH:mm:ss"));
+			appMap.put("deployTime", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd HH:mm:ss"));
 			list.add(appMap);
 		}
 		subjectMap.put("list", list);
@@ -1353,27 +1261,22 @@ public class InterfaceServiceImp extends BaseService implements
 	 * @throws AppBizException
 	 * @throws IOException
 	 */
-	public boolean downloadApp(final Map<String, String> para,
-			HttpServletRequest request, HttpServletResponse response)
+	public boolean downloadApp(final Map<String, String> para, HttpServletRequest request, HttpServletResponse response)
 			throws AppBizException, IOException {
-		String fileName = ParaUtils.checkStringAndGet(para.get("appUrl"),
-				"appUrl");
+		String fileName = ParaUtils.checkStringAndGet(para.get("appUrl"), "appUrl");
 		final BaseDao appstoreDao = getAppstoreDao();
 		executorService.execute(new Runnable() {
 			public void run() {
-				if (StringUtils.isNotBlank(para.get("appId"))
-						&& StringUtils.isNumeric(para.get("appId"))) {
+				if (StringUtils.isNotBlank(para.get("appId")) && StringUtils.isNumeric(para.get("appId"))) {
 					int appId = 0;
 					try {
-						appId = ParaUtils.checkNumberAndGet(para.get("appId"),
-								"appId");
+						appId = ParaUtils.checkNumberAndGet(para.get("appId"), "appId");
 					} catch (AppBizException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					int user_Id = 0;
-					if (null != para.get("userId")
-							&& !"".equals(para.get("userId"))) {
+					if (null != para.get("userId") && !"".equals(para.get("userId"))) {
 						user_Id = Integer.valueOf(para.get("userId"));
 					}
 					final int userId = user_Id;
@@ -1386,12 +1289,10 @@ public class InterfaceServiceImp extends BaseService implements
 					appDownload.setMac(para.get("mac"));
 					appstoreDao.save(appDownload);
 
-					TAppCategoryHot hot = (TAppCategoryHot) appstoreDao
-							.findObject("from TAppCategoryHot where appId=?",
-									new Object[] { appDownload.getAppId() });
+					TAppCategoryHot hot = (TAppCategoryHot) appstoreDao.findObject("from TAppCategoryHot where appId=?",
+							new Object[] { appDownload.getAppId() });
 					if (hot == null) {
-						TApp app = (TApp) appstoreDao.findObject(
-								"from TApp where id=?",
+						TApp app = (TApp) appstoreDao.findObject("from TApp where id=?",
 								new Object[] { appDownload.getAppId() });
 						if (app != null) {
 							hot = new TAppCategoryHot();
@@ -1418,8 +1319,7 @@ public class InterfaceServiceImp extends BaseService implements
 	}
 
 	@Override
-	public Map<String, Object> getCategoryInfo(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> getCategoryInfo(Map<String, String> para) throws Exception {
 		MyUtil mu = MyUtil.getInstance();
 		List<Object> plist = new ArrayList<Object>();
 		StringBuffer sql = new StringBuffer();
@@ -1438,29 +1338,28 @@ public class InterfaceServiceImp extends BaseService implements
 		plist.add(categoryId);
 
 		PageBar pb = new PageBar(para);
-		if (mu.isNotBlank(para.get("pageNo"))
-				&& NumberUtils.isDigits(para.get("pageNo")))
+		if (mu.isNotBlank(para.get("pageNo")) && NumberUtils.isDigits(para.get("pageNo")))
 			pb.setCurrentPageNum(para.get("pageNo"));
-		if (mu.isNotBlank(para.get("pageSize"))
-				&& NumberUtils.isDigits(para.get("pageSize")))
+		if (mu.isNotBlank(para.get("pageSize")) && NumberUtils.isDigits(para.get("pageSize")))
 			pb.setEveryPageNum(para.get("pageSize"));
 
 		if ("good".equals(para.get("cType"))) { // 精品类别
 			sql.append("from t_app t1 INNER JOIN t_app_category_good b on t1.id=b.app_id and b.category_id=?");
 		} else if ("hot".equals(para.get("cType"))) { // 热门类别
-			sql.append("from t_app t1 INNER JOIN t_app_category_hot b on t1.id=b.app_id and b.category_id=? order by b.count desc");
+			sql.append(
+					"from t_app t1 INNER JOIN t_app_category_hot b on t1.id=b.app_id and b.category_id=? order by b.count desc");
 			pb.setEveryPageNum("30");
 		} else { // 其他类别
-			sql.append("from t_app t1 INNER JOIN t_app_category_hot b on t1.id=b.app_id and b.category_id=? order by b.count desc");
+			sql.append(
+					"from t_app t1 INNER JOIN t_app_category_hot b on t1.id=b.app_id and b.category_id=? order by b.count desc");
 			// sql.append("FROM t_app t1 WHERE t1.category_id = ?");
 		}
 
-		int totalSize = this.getAppstoreDao().findIntBySql(
-				"SELECT COUNT(1) " + sql, plist.toArray());
+		int totalSize = this.getAppstoreDao().findIntBySql("SELECT COUNT(1) " + sql, plist.toArray());
 
 		sql.insert(0, "SELECT t1.* ");
-		List<Map<String, Object>> rlist = this.getAppstoreDao()
-				.findListMapPageBySql(sql.toString(), plist.toArray(), pb);
+		List<Map<String, Object>> rlist = this.getAppstoreDao().findListMapPageBySql(sql.toString(), plist.toArray(),
+				pb);
 		DecimalFormat df = new DecimalFormat("#.00");
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		Map<String, String> categoryMap = new HashMap<String, String>();
@@ -1472,9 +1371,8 @@ public class InterfaceServiceImp extends BaseService implements
 			Map<String, Object> appMap = new LinkedHashMap<String, Object>();
 			appMap.put("id", Integer.parseInt(map.get("id").toString()));
 			appMap.put("categoryId", map.get("category_id"));
-			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para
-					.get("batchId"), para.get("mac"), "", map.get("id")
-					.toString()));
+			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
 			appMap.put("summary", map.get("app_desc"));
@@ -1491,17 +1389,14 @@ public class InterfaceServiceImp extends BaseService implements
 			appMap.put("pic5", ParaUtils.checkPicUri(map.get("pic5")));
 			Map<String, Object> infoMap = new LinkedHashMap<String, Object>();
 			infoMap.put("company", map.get("develope"));
-			infoMap.put("classify",
-					categoryMap.get(map.get("category_id").toString()));
-			infoMap.put("lastestUpdate",
-					mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
+			infoMap.put("classify", categoryMap.get(map.get("category_id").toString()));
+			infoMap.put("lastestUpdate", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
 			infoMap.put("version", map.get("version"));
 			infoMap.put("size", df.format(map.get("app_size")));
 			infoMap.put("ageLimit", map.get("age_limit"));
 			infoMap.put("compaticity", map.get("os_version_min"));
 			appMap.put("infomation", infoMap);
-			appMap.put("deployTime", mu.formateDate(map.get("uptime")
-					.toString(), "yyyy-MM-dd HH:mm:ss"));
+			appMap.put("deployTime", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd HH:mm:ss"));
 			list.add(appMap);
 		}
 		subjectMap.put("list", list);
@@ -1513,8 +1408,8 @@ public class InterfaceServiceImp extends BaseService implements
 
 	public Map<String, String> getCategory() {
 		Map<String, String> categoryMap = new HashMap<String, String>();
-		List<Map<String, Object>> clist = this.getAppstoreDao()
-				.findListMapBySql("select * from t_app_category t1", null);
+		List<Map<String, Object>> clist = this.getAppstoreDao().findListMapBySql("select * from t_app_category t1",
+				null);
 		for (Map<String, Object> mm : clist) {
 			categoryMap.put(mm.get("id").toString(), mm.get("name").toString());
 		}
@@ -1522,8 +1417,7 @@ public class InterfaceServiceImp extends BaseService implements
 	}
 
 	@Override
-	public Map<String, Object> getRelationAppList(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> getRelationAppList(Map<String, String> para) throws Exception {
 		MyUtil mu = MyUtil.getInstance();
 		List<Object> plist = new ArrayList<Object>();
 		StringBuffer sql = new StringBuffer();
@@ -1542,27 +1436,23 @@ public class InterfaceServiceImp extends BaseService implements
 		plist.add(appId);
 		plist.add(appId);
 		sql.append("FROM t_app WHERE id != ? AND category_id = (SELECT category_id FROM t_app WHERE id = ?)");
-		int totalSize = this.getAppstoreDao().findIntBySql(
-				"SELECT COUNT(1) " + sql, plist.toArray());
+		int totalSize = this.getAppstoreDao().findIntBySql("SELECT COUNT(1) " + sql, plist.toArray());
 		PageBar pb = new PageBar(para);
-		if (mu.isNotBlank(para.get("pageNo"))
-				&& NumberUtils.isDigits(para.get("pageNo")))
+		if (mu.isNotBlank(para.get("pageNo")) && NumberUtils.isDigits(para.get("pageNo")))
 			pb.setCurrentPageNum(para.get("pageNo"));
-		if (mu.isNotBlank(para.get("pageSize"))
-				&& NumberUtils.isDigits(para.get("pageSize")))
+		if (mu.isNotBlank(para.get("pageSize")) && NumberUtils.isDigits(para.get("pageSize")))
 			pb.setEveryPageNum("20");
 		sql.insert(0, "SELECT * ");
-		List<Map<String, Object>> rlist = this.getAppstoreDao()
-				.findListMapPageBySql(sql.toString(), plist.toArray(), pb);
+		List<Map<String, Object>> rlist = this.getAppstoreDao().findListMapPageBySql(sql.toString(), plist.toArray(),
+				pb);
 		DecimalFormat df = new DecimalFormat("#.00");
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		Map<String, String> categoryMap = new HashMap<String, String>();
 		if (rlist.size() > 0) {
-			List<Map<String, Object>> clist = this.getAppstoreDao()
-					.findListMapBySql("select * from t_app_category t1", null);
+			List<Map<String, Object>> clist = this.getAppstoreDao().findListMapBySql("select * from t_app_category t1",
+					null);
 			for (Map<String, Object> mm : clist) {
-				categoryMap.put(mm.get("id").toString(), mm.get("name")
-						.toString());
+				categoryMap.put(mm.get("id").toString(), mm.get("name").toString());
 			}
 		}
 		for (int i = 0; i < rlist.size(); i++) {
@@ -1570,9 +1460,8 @@ public class InterfaceServiceImp extends BaseService implements
 			Map<String, Object> appMap = new LinkedHashMap<String, Object>();
 			appMap.put("id", Integer.parseInt(map.get("id").toString()));
 			appMap.put("categoryId", map.get("category_id"));
-			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para
-					.get("batchId"), para.get("mac"), "", map.get("id")
-					.toString()));
+			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
 			appMap.put("summary", map.get("app_desc"));
@@ -1589,17 +1478,14 @@ public class InterfaceServiceImp extends BaseService implements
 			appMap.put("pic5", ParaUtils.checkPicUri(map.get("pic5")));
 			Map<String, Object> infoMap = new LinkedHashMap<String, Object>();
 			infoMap.put("company", map.get("develope"));
-			infoMap.put("classify",
-					categoryMap.get(map.get("category_id").toString()));
-			infoMap.put("lastestUpdate",
-					mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
+			infoMap.put("classify", categoryMap.get(map.get("category_id").toString()));
+			infoMap.put("lastestUpdate", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
 			infoMap.put("version", map.get("version"));
 			infoMap.put("size", df.format(map.get("app_size")));
 			infoMap.put("ageLimit", map.get("age_limit"));
 			infoMap.put("compaticity", map.get("os_version_min"));
 			appMap.put("infomation", infoMap);
-			appMap.put("deployTime", mu.formateDate(map.get("uptime")
-					.toString(), "yyyy-MM-dd HH:mm:ss"));
+			appMap.put("deployTime", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd HH:mm:ss"));
 			list.add(appMap);
 		}
 		subjectMap.put("list", list);
@@ -1616,8 +1502,7 @@ public class InterfaceServiceImp extends BaseService implements
 		String token = para.get("token");
 		String batchId = para.get("batchId");
 
-		List<Object> list = this.getAppstoreDao().findList(
-				"from MDevXgToken where token=?", new Object[] { token });
+		List<Object> list = this.getAppstoreDao().findList("from MDevXgToken where token=?", new Object[] { token });
 		if (list.size() > 0)
 			return MarketUtils.getResJson("success");
 
@@ -1629,8 +1514,7 @@ public class InterfaceServiceImp extends BaseService implements
 		try {
 			this.getAppstoreDao().save(tt);
 			rmap.put("msg", "success");
-			return MarketUtils.getResJson(JSONObject.fromObject(rmap)
-					.toString());
+			return MarketUtils.getResJson(JSONObject.fromObject(rmap).toString());
 		} catch (Exception e) {
 			return MarketUtils.getErrorJson("error");
 		}
@@ -1638,8 +1522,7 @@ public class InterfaceServiceImp extends BaseService implements
 
 	private DeviceMacInfoService deviceMacInfoService;
 
-	public void setDeviceMacInfoService(
-			DeviceMacInfoService deviceMacInfoService) {
+	public void setDeviceMacInfoService(DeviceMacInfoService deviceMacInfoService) {
 		this.deviceMacInfoService = deviceMacInfoService;
 	}
 
@@ -1678,17 +1561,17 @@ public class InterfaceServiceImp extends BaseService implements
 	}
 
 	@Override
-	public Map<String, Object> querySxjpList(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> querySxjpList(Map<String, String> para) throws Exception {
 		List<Object> plist = new ArrayList<Object>();
 		StringBuffer sql = new StringBuffer();
 		Map<String, Object> rmap = new LinkedHashMap<String, Object>();
 		rmap.put("result", 1);
-		sql.append("select t2.id,t4.type,t4.pic,t4.des,t4.title from t_sx_app_theme_bag_sort t1 INNER JOIN t_app_theme_bag t2 on t1.theme_bag_id =t2.id");
-		sql.append(" INNER JOIN t_app_theme_bag_list t3 on t2.id = t3.theme_bag_id INNER JOIN t_app_theme t4 on t3.sub_id=t4.id");
+		sql.append(
+				"select t2.id,t4.type,t4.pic,t4.des,t4.title from t_sx_app_theme_bag_sort t1 INNER JOIN t_app_theme_bag t2 on t1.theme_bag_id =t2.id");
+		sql.append(
+				" INNER JOIN t_app_theme_bag_list t3 on t2.id = t3.theme_bag_id INNER JOIN t_app_theme t4 on t3.sub_id=t4.id");
 		sql.append(" order by t1.sort");
-		List<Map<String, Object>> rlist = this.getAppstoreDao()
-				.findListMapBySql(sql.toString(), plist.toArray());
+		List<Map<String, Object>> rlist = this.getAppstoreDao().findListMapBySql(sql.toString(), plist.toArray());
 
 		List<Map<String, Object>> ll = new ArrayList<Map<String, Object>>();
 		for (Map<String, Object> mm : rlist) {
@@ -1717,8 +1600,7 @@ public class InterfaceServiceImp extends BaseService implements
 	 * 23 三星独家定制 24 三星Specials 25 三星付费排行 26 三星免费排行 27 三星畅销排行
 	 */
 	@Override
-	public Map<String, Object> getSxAppList(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> getSxAppList(Map<String, String> para) throws Exception {
 		StringBuffer sql = new StringBuffer();
 		sql.append("select t7.name as cat2_name,t6.* from t_app_theme_bag t2  ");
 		sql.append(" INNER JOIN t_app_theme_bag_list t3 on t2.id = t3.theme_bag_id ");
@@ -1743,7 +1625,8 @@ public class InterfaceServiceImp extends BaseService implements
 		} else {
 			sql = new StringBuffer();
 			sql.append("select t7.name as cat2_name,t6.*,t4.rtype from t_app_theme_bag t2 ");
-			sql.append(" INNER JOIN t_app_theme_bag_list t3 on t2.id = t3.theme_bag_id INNER JOIN t_app_theme t4 on t3.sub_id=t4.id ");
+			sql.append(
+					" INNER JOIN t_app_theme_bag_list t3 on t2.id = t3.theme_bag_id INNER JOIN t_app_theme t4 on t3.sub_id=t4.id ");
 			sql.append(" inner JOIN t_app_theme_list t5 on t4.id = t5.theme_id ");
 			sql.append(" INNER JOIN t_app t6 on t5.app_id=t6.id");
 			sql.append(" INNER JOIN t_app_category t7 on t6.category_id=t7.id");
@@ -1758,17 +1641,14 @@ public class InterfaceServiceImp extends BaseService implements
 
 		plist.add(stype);
 
-		int totalSize = this.getAppstoreDao().findIntBySql(
-				"SELECT COUNT(1) from (" + sql + ") aa", plist.toArray());
+		int totalSize = this.getAppstoreDao().findIntBySql("SELECT COUNT(1) from (" + sql + ") aa", plist.toArray());
 		PageBar pb = new PageBar(para);
-		if (mu.isNotBlank(para.get("pageNo"))
-				&& NumberUtils.isDigits(para.get("pageNo")))
+		if (mu.isNotBlank(para.get("pageNo")) && NumberUtils.isDigits(para.get("pageNo")))
 			pb.setCurrentPageNum(para.get("pageNo"));
-		if (mu.isNotBlank(para.get("pageSize"))
-				&& NumberUtils.isDigits(para.get("pageSize")))
+		if (mu.isNotBlank(para.get("pageSize")) && NumberUtils.isDigits(para.get("pageSize")))
 			pb.setEveryPageNum(para.get("pageSize"));
-		List<Map<String, Object>> rlist = this.getAppstoreDao()
-				.findListMapPageBySql(sql.toString(), plist.toArray(), pb);
+		List<Map<String, Object>> rlist = this.getAppstoreDao().findListMapPageBySql(sql.toString(), plist.toArray(),
+				pb);
 		DecimalFormat df = new DecimalFormat("#.00");
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		Map<String, String> categoryMap = new HashMap<String, String>();
@@ -1781,13 +1661,11 @@ public class InterfaceServiceImp extends BaseService implements
 			Map<String, Object> appMap = new LinkedHashMap<String, Object>();
 			appMap.put("id", Integer.parseInt(map.get("id").toString()));
 			appMap.put("categoryId", map.get("category_id"));
-			if (null != map.get("rtype")
-					&& !"".equals(map.get("rtype").toString()))
+			if (null != map.get("rtype") && !"".equals(map.get("rtype").toString()))
 				type = map.get("rtype").toString();
 			appMap.put("type", Integer.valueOf(type));
-			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para
-					.get("batchId"), para.get("mac"), "", map.get("id")
-					.toString()));
+			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
 			appMap.put("summary", map.get("app_desc"));
@@ -1804,17 +1682,14 @@ public class InterfaceServiceImp extends BaseService implements
 			appMap.put("pic5", ParaUtils.checkPicUri(map.get("pic5")));
 			Map<String, Object> infoMap = new LinkedHashMap<String, Object>();
 			infoMap.put("company", map.get("develope"));
-			infoMap.put("classify",
-					categoryMap.get(map.get("category_id").toString()));
-			infoMap.put("lastestUpdate",
-					mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
+			infoMap.put("classify", categoryMap.get(map.get("category_id").toString()));
+			infoMap.put("lastestUpdate", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
 			infoMap.put("version", map.get("version"));
 			infoMap.put("size", df.format(map.get("app_size")));
 			infoMap.put("ageLimit", map.get("age_limit"));
 			infoMap.put("compaticity", map.get("os_version_min"));
 			appMap.put("infomation", infoMap);
-			appMap.put("deployTime", mu.formateDate(map.get("uptime")
-					.toString(), "yyyy-MM-dd HH:mm:ss"));
+			appMap.put("deployTime", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd HH:mm:ss"));
 			list.add(appMap);
 		}
 
@@ -1827,8 +1702,7 @@ public class InterfaceServiceImp extends BaseService implements
 	}
 
 	@Override
-	public Map<String, Object> getAdConf(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> getAdConf(Map<String, String> para) throws Exception {
 		Map<String, Object> rmap = new LinkedHashMap<String, Object>();
 		rmap.put("result", 1);
 		Map<String, Object> subjectMap = new LinkedHashMap<String, Object>();
@@ -1839,13 +1713,13 @@ public class InterfaceServiceImp extends BaseService implements
 
 	// 热门应用51
 	@Override
-	public Map<String, Object> hotSearchApp(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> hotSearchApp(Map<String, String> para) throws Exception {
 		Map<String, Object> rmap = new LinkedHashMap<String, Object>();
 		rmap.put("result", 1);
 		Map<String, Object> subjectMap = new LinkedHashMap<String, Object>();
 		// List<Object> list =
-		// this.getAppstoreDao().findListMax("from TSearchHot a where a.appType=? order by id desc",
+		// this.getAppstoreDao().findListMax("from TSearchHot a where
+		// a.appType=? order by id desc",
 		// new Object[] { Integer.valueOf(para.get("appType")) }, 10);
 		List<Map<String, String>> rList = new ArrayList<Map<String, String>>();
 		// for (Object oo : list) {
@@ -1869,14 +1743,12 @@ public class InterfaceServiceImp extends BaseService implements
 		plist.add(stype);
 
 		PageBar pb = new PageBar(para);
-		if (mu.isNotBlank(para.get("pageNo"))
-				&& NumberUtils.isDigits(para.get("pageNo")))
+		if (mu.isNotBlank(para.get("pageNo")) && NumberUtils.isDigits(para.get("pageNo")))
 			pb.setCurrentPageNum(para.get("pageNo"));
-		if (mu.isNotBlank(para.get("pageSize"))
-				&& NumberUtils.isDigits(para.get("pageSize")))
+		if (mu.isNotBlank(para.get("pageSize")) && NumberUtils.isDigits(para.get("pageSize")))
 			pb.setEveryPageNum(para.get("pageSize"));
-		List<Map<String, Object>> rlist = this.getAppstoreDao()
-				.findListMapPageBySql(sql.toString(), plist.toArray(), pb);
+		List<Map<String, Object>> rlist = this.getAppstoreDao().findListMapPageBySql(sql.toString(), plist.toArray(),
+				pb);
 
 		for (int i = 0; i < rlist.size(); i++) {
 			Map<String, Object> map = rlist.get(i);
@@ -1892,8 +1764,7 @@ public class InterfaceServiceImp extends BaseService implements
 	}
 
 	@Override
-	public Map<String, Object> discoveryList(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> discoveryList(Map<String, String> para) throws Exception {
 		MyUtil mu = MyUtil.getInstance();
 		int sort = 40;
 		List<Object> plist = new ArrayList<Object>();
@@ -1903,27 +1774,28 @@ public class InterfaceServiceImp extends BaseService implements
 		Map<String, Object> subjectMap = new LinkedHashMap<String, Object>();
 		sql.append("SELECT * FROM ( ");
 		sql.append("SELECT * FROM ( ");
-		sql.append("SELECT t3.sort, t5.theme_id subj_id, CONCAT(t2.name) subj_name, t4.pic subj_pic, t7.cat1_name, t7.cat2_name, t6.*,t4.rtype  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.theme_bag_id = "
-				+ sort
-				+ ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
+		sql.append(
+				"SELECT t3.sort, t5.theme_id subj_id, CONCAT(t2.name) subj_name, t4.pic subj_pic, t7.cat1_name, t7.cat2_name, t6.*,t4.rtype  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.theme_bag_id = "
+						+ sort + ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
 		sql.append("LEFT JOIN t_app_theme_bag_list t3 ON t3.sub_type = 2 AND t2.id = t3.theme_bag_id ");
 		sql.append("LEFT JOIN t_app_theme t4 ON t3.sub_id = t4.id ");
 		sql.append("LEFT JOIN t_app_theme_list t5 ON t4.id = t5.theme_id ");
 		sql.append("LEFT JOIN t_app t6 ON t5.app_id = t6.id ");
-		sql.append("LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
+		sql.append(
+				"LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
 		sql.append("ORDER BY t3.sort, t5.sort) t1 ");
 		sql.append("UNION ALL ");
 		sql.append("SELECT * FROM ( ");
-		sql.append("SELECT t3.sort, 0 subj_id, CONCAT(t2.name) subj_name, '' subj_pic, t7.cat1_name, t7.cat2_name, t6.*, '' rtype FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.theme_bag_id = "
-				+ sort
-				+ ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
+		sql.append(
+				"SELECT t3.sort, 0 subj_id, CONCAT(t2.name) subj_name, '' subj_pic, t7.cat1_name, t7.cat2_name, t6.*, '' rtype FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.theme_bag_id = "
+						+ sort + ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
 		sql.append("LEFT JOIN t_app_theme_bag_list t3 ON t3.sub_type = 1 AND t2.id = t3.theme_bag_id ");
 		sql.append("LEFT JOIN t_app t6 ON t3.sub_id = t6.id ");
-		sql.append("LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
+		sql.append(
+				"LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
 		sql.append("ORDER BY t3.sort) t2 ");
 		sql.append(") t1 WHERE t1.sort IS NOT NULL ORDER BY t1.sort");
-		List<Map<String, Object>> rlist = this.getAppstoreDao()
-				.findListMapBySql(sql.toString(), plist.toArray());
+		List<Map<String, Object>> rlist = this.getAppstoreDao().findListMapBySql(sql.toString(), plist.toArray());
 		Map<String, Integer> cThemeMap = new LinkedHashMap<String, Integer>();
 		for (Map<String, Object> map : rlist) {
 			String subjId = map.get("subj_id").toString();
@@ -1958,8 +1830,7 @@ public class InterfaceServiceImp extends BaseService implements
 			if (isThemeMap.get(subjId)) {
 				if (!countMap.containsKey(subjId)) {
 					appMap.put("id", Integer.parseInt(subjId));
-					appMap.put("pic",
-							ParaUtils.checkPicUri(map.get("subj_pic")));
+					appMap.put("pic", ParaUtils.checkPicUri(map.get("subj_pic")));
 					appMap.put("type", 2);
 					list.add(appMap);
 					countMap.put(subjId, true);
@@ -1969,19 +1840,16 @@ public class InterfaceServiceImp extends BaseService implements
 			appMap.put("id", Integer.parseInt(map.get("id").toString()));
 
 			subPic = ParaUtils.checkPicUri(map.get("icon"));
-			if (null != map.get("subj_pic")
-					&& !"".equals(map.get("subj_pic").toString()))
+			if (null != map.get("subj_pic") && !"".equals(map.get("subj_pic").toString()))
 				subPic = ParaUtils.checkPicUri(map.get("subj_pic"));
 			appMap.put("pic", subPic);
-			if (null != map.get("rtype")
-					&& !"".equals(map.get("rtype").toString()))
+			if (null != map.get("rtype") && !"".equals(map.get("rtype").toString()))
 				type = map.get("rtype").toString();
 			appMap.put("type", type);
 
 			appMap.put("categoryId", map.get("category_id"));
-			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para
-					.get("batchId"), para.get("mac"), "", map.get("id")
-					.toString()));
+			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("package", map.get("pakeage"));
 			appMap.put("name", map.get("name"));
@@ -2000,10 +1868,8 @@ public class InterfaceServiceImp extends BaseService implements
 			infoMap.put("company", map.get("develope"));
 			infoMap.put("classify", map.get("cat2_name"));
 			if (map.get("uptime") != null) {
-				infoMap.put("lastestUpdate", mu.formateDate(map.get("uptime")
-						.toString(), "yyyy-MM-dd"));
-				appMap.put("deployTime", mu.formateDate(map.get("uptime")
-						.toString(), "yyyy-MM-dd HH:mm:ss"));
+				infoMap.put("lastestUpdate", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
+				appMap.put("deployTime", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd HH:mm:ss"));
 			}
 
 			infoMap.put("version", map.get("version"));
@@ -2020,8 +1886,7 @@ public class InterfaceServiceImp extends BaseService implements
 	}
 
 	@Override
-	public Map<String, Object> adAppList(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> adAppList(Map<String, String> para) throws Exception {
 		StringBuffer sql = new StringBuffer();
 		sql.append("select t7.name as cat2_name,t6.* from t_app_theme_bag t2  ");
 		sql.append(" INNER JOIN t_app_theme_bag_list t3 on t2.id = t3.theme_bag_id ");
@@ -2040,17 +1905,14 @@ public class InterfaceServiceImp extends BaseService implements
 
 		plist.add(stype);
 
-		int totalSize = this.getAppstoreDao().findIntBySql(
-				"SELECT COUNT(1) from (" + sql + ") aa", plist.toArray());
+		int totalSize = this.getAppstoreDao().findIntBySql("SELECT COUNT(1) from (" + sql + ") aa", plist.toArray());
 		PageBar pb = new PageBar(para);
-		if (mu.isNotBlank(para.get("pageNo"))
-				&& NumberUtils.isDigits(para.get("pageNo")))
+		if (mu.isNotBlank(para.get("pageNo")) && NumberUtils.isDigits(para.get("pageNo")))
 			pb.setCurrentPageNum(para.get("pageNo"));
-		if (mu.isNotBlank(para.get("pageSize"))
-				&& NumberUtils.isDigits(para.get("pageSize")))
+		if (mu.isNotBlank(para.get("pageSize")) && NumberUtils.isDigits(para.get("pageSize")))
 			pb.setEveryPageNum(para.get("pageSize"));
-		List<Map<String, Object>> rlist = this.getAppstoreDao()
-				.findListMapPageBySql(sql.toString(), plist.toArray(), pb);
+		List<Map<String, Object>> rlist = this.getAppstoreDao().findListMapPageBySql(sql.toString(), plist.toArray(),
+				pb);
 		DecimalFormat df = new DecimalFormat("#.00");
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		Map<String, String> categoryMap = new HashMap<String, String>();
@@ -2063,13 +1925,11 @@ public class InterfaceServiceImp extends BaseService implements
 			Map<String, Object> appMap = new LinkedHashMap<String, Object>();
 			appMap.put("id", Integer.parseInt(map.get("id").toString()));
 			appMap.put("categoryId", map.get("category_id"));
-			if (null != map.get("rtype")
-					&& !"".equals(map.get("rtype").toString()))
+			if (null != map.get("rtype") && !"".equals(map.get("rtype").toString()))
 				type = map.get("rtype").toString();
 			appMap.put("type", Integer.valueOf(type));
-			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para
-					.get("batchId"), para.get("mac"), "", map.get("id")
-					.toString()));
+			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
 			appMap.put("summary", map.get("app_desc"));
@@ -2086,17 +1946,14 @@ public class InterfaceServiceImp extends BaseService implements
 			appMap.put("pic5", ParaUtils.checkPicUri(map.get("pic5")));
 			Map<String, Object> infoMap = new LinkedHashMap<String, Object>();
 			infoMap.put("company", map.get("develope"));
-			infoMap.put("classify",
-					categoryMap.get(map.get("category_id").toString()));
-			infoMap.put("lastestUpdate",
-					mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
+			infoMap.put("classify", categoryMap.get(map.get("category_id").toString()));
+			infoMap.put("lastestUpdate", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
 			infoMap.put("version", map.get("version"));
 			infoMap.put("size", df.format(map.get("app_size")));
 			infoMap.put("ageLimit", map.get("age_limit"));
 			infoMap.put("compaticity", map.get("os_version_min"));
 			appMap.put("infomation", infoMap);
-			appMap.put("deployTime", mu.formateDate(map.get("uptime")
-					.toString(), "yyyy-MM-dd HH:mm:ss"));
+			appMap.put("deployTime", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd HH:mm:ss"));
 			list.add(appMap);
 		}
 
@@ -2109,8 +1966,7 @@ public class InterfaceServiceImp extends BaseService implements
 	}
 
 	@Override
-	public Map<String, Object> preDownAppList(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> preDownAppList(Map<String, String> para) throws Exception {
 		StringBuffer sql = new StringBuffer();
 		sql.append("SELECT t7.name AS cat2_name, t6.* FROM t_app_theme_bag t2");
 		sql.append(" INNER JOIN t_app_theme_bag_list t3 ON t2.id = t3.theme_bag_id");
@@ -2129,17 +1985,14 @@ public class InterfaceServiceImp extends BaseService implements
 
 		plist.add(bagName);
 
-		int totalSize = this.getAppstoreDao().findIntBySql(
-				"SELECT COUNT(1) FROM (" + sql + ") aa", plist.toArray());
+		int totalSize = this.getAppstoreDao().findIntBySql("SELECT COUNT(1) FROM (" + sql + ") aa", plist.toArray());
 		PageBar pb = new PageBar(para);
-		if (mu.isNotBlank(para.get("pageNo"))
-				&& NumberUtils.isDigits(para.get("pageNo")))
+		if (mu.isNotBlank(para.get("pageNo")) && NumberUtils.isDigits(para.get("pageNo")))
 			pb.setCurrentPageNum(para.get("pageNo"));
-		if (mu.isNotBlank(para.get("pageSize"))
-				&& NumberUtils.isDigits(para.get("pageSize")))
+		if (mu.isNotBlank(para.get("pageSize")) && NumberUtils.isDigits(para.get("pageSize")))
 			pb.setEveryPageNum(para.get("pageSize"));
-		List<Map<String, Object>> rlist = this.getAppstoreDao()
-				.findListMapPageBySql(sql.toString(), plist.toArray(), pb);
+		List<Map<String, Object>> rlist = this.getAppstoreDao().findListMapPageBySql(sql.toString(), plist.toArray(),
+				pb);
 		DecimalFormat df = new DecimalFormat("#.00");
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		Map<String, String> categoryMap = new HashMap<String, String>();
@@ -2152,13 +2005,11 @@ public class InterfaceServiceImp extends BaseService implements
 			Map<String, Object> appMap = new LinkedHashMap<String, Object>();
 			appMap.put("id", Integer.parseInt(map.get("id").toString()));
 			appMap.put("categoryId", map.get("category_id"));
-			if (null != map.get("rtype")
-					&& !"".equals(map.get("rtype").toString()))
+			if (null != map.get("rtype") && !"".equals(map.get("rtype").toString()))
 				type = map.get("rtype").toString();
 			appMap.put("type", Integer.valueOf(type));
-			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para
-					.get("batchId"), para.get("mac"), "", map.get("id")
-					.toString()));
+			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
 			appMap.put("summary", map.get("app_desc"));
@@ -2176,17 +2027,14 @@ public class InterfaceServiceImp extends BaseService implements
 			appMap.put("pic5", ParaUtils.checkPicUri(map.get("pic5")));
 			Map<String, Object> infoMap = new LinkedHashMap<String, Object>();
 			infoMap.put("company", map.get("develope"));
-			infoMap.put("classify",
-					categoryMap.get(map.get("category_id").toString()));
-			infoMap.put("lastestUpdate",
-					mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
+			infoMap.put("classify", categoryMap.get(map.get("category_id").toString()));
+			infoMap.put("lastestUpdate", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
 			infoMap.put("version", map.get("version"));
 			infoMap.put("size", df.format(map.get("app_size")));
 			infoMap.put("ageLimit", map.get("age_limit"));
 			infoMap.put("compaticity", map.get("os_version_min"));
 			appMap.put("infomation", infoMap);
-			appMap.put("deployTime", mu.formateDate(map.get("uptime")
-					.toString(), "yyyy-MM-dd HH:mm:ss"));
+			appMap.put("deployTime", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd HH:mm:ss"));
 			list.add(appMap);
 		}
 
@@ -2198,43 +2046,34 @@ public class InterfaceServiceImp extends BaseService implements
 		return rmap;
 	}
 
-	public Map<String, Object> jmSwitch(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> jmSwitch(Map<String, String> para) throws Exception {
 		Map<String, Object> rmap = new LinkedHashMap<String, Object>();
 		rmap.put("switch", Integer.valueOf(EnvConfigurer.getEvn("jmSwitch")));
 		return rmap;
 	}
 
 	@Override
-	public Map<String, Object> checkADSDk(Map<String, String> para)
-			throws Exception {
+	public Map<String, Object> checkADSDk(Map<String, String> para) throws Exception {
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		Map<String, Object> map1 = new LinkedHashMap<String, Object>();
 		map.put("result", 1);
 		String batchId = para.get("batchId");
 		String mac = para.get("mac");
-		Map<String, Object> batchInfo = this.getAppstoreDao().findMapBySql(
-				"SELECT * from t_device_batch WHERE batch_id=?",
-				new Object[] { batchId });
-		Map<String, Object> sdkInfo = this.getAppstoreDao().findMapBySql(
-				"SELECT * from t_app_sdk WHERE id=?",
+		Map<String, Object> batchInfo = this.getAppstoreDao()
+				.findMapBySql("SELECT * from t_device_batch WHERE batch_id=?", new Object[] { batchId });
+		Map<String, Object> sdkInfo = this.getAppstoreDao().findMapBySql("SELECT * from t_app_sdk WHERE id=?",
 				new Object[] { batchInfo.get("sdk_id") });
 		if (batchInfo.get("sdk_switch").equals("1")) {
-			Map<String, Object> macInfo = this
-					.getAppstoreDao()
-					.findMapBySql(
-							"SELECT * from t_device_mac_info WHERE mac=? AND batch_id=?",
-							new Object[] { mac, batchId });
+			Map<String, Object> macInfo = this.getAppstoreDao().findMapBySql(
+					"SELECT * from t_device_mac_info WHERE mac=? AND batch_id=?", new Object[] { mac, batchId });
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(sdf.parse(macInfo.get("ctime").toString()));
 			long time1 = cal.getTimeInMillis();
 			cal.setTime(sdf.parse(sdf.format(new Date())));
 			long time2 = cal.getTimeInMillis();
-			Integer val = Integer.parseInt(String.valueOf((time2 - time1)
-					/ (1000 * 3600 * 24)));
-			if (val >= Integer.parseInt(String.valueOf(sdkInfo
-					.get("activeTime").toString()))) {
+			Integer val = Integer.parseInt(String.valueOf((time2 - time1) / (1000 * 3600 * 24)));
+			if (val >= Integer.parseInt(String.valueOf(sdkInfo.get("activeTime").toString()))) {
 				map1.put("Switch", 1);
 			} else {
 				map1.put("Switch", 0);
